@@ -443,11 +443,43 @@ WordPress is released under the GPL v2 license:
 
 ## 🙏 Credits
 
+- **Irvandoda** (Irvando Demas Arifiandani) - Creator & Lead Developer
+  - Website: [irvandoda.my.id](https://irvandoda.my.id)
+  - Email: irvando.d.a@gmail.com
 - **WordPress Core Team** - For the amazing CMS
 - **Optimization Techniques** - Based on WordPress best practices
 - **Community** - For continuous feedback and improvements
 
-## 📞 Support
+## 👨‍💻 About the Developer
+
+This WordPress Super Lightweight optimization was created by **Irvandoda** (Irvando Demas Arifiandani), a passionate web developer specializing in WordPress optimization and performance tuning.
+
+### 🚀 Need Professional WordPress Services?
+
+I offer professional WordPress development and optimization services:
+
+- ⚡ **WordPress Performance Optimization** - Make your site blazing fast
+- 🔧 **Custom WordPress Development** - Tailored solutions for your needs
+- 🛡️ **Security Hardening** - Protect your WordPress site
+- 🎨 **Theme & Plugin Development** - Custom features and designs
+- 📊 **Database Optimization** - Solve N+1 queries and performance issues
+- 🔄 **WordPress Migration** - Safe and seamless site transfers
+- 💼 **Maintenance & Support** - Keep your site running smoothly
+
+### 📬 Get in Touch
+
+I'm available for freelance projects and consulting:
+
+- 🌐 **Website:** [irvandoda.my.id](https://irvandoda.my.id)
+- 📧 **Email:** [irvando.d.a@gmail.com](mailto:irvando.d.a@gmail.com)
+- 💬 **WhatsApp:** [+62 857-4747-6308](https://wa.me/6285747476308)
+- 💼 **GitHub:** [@irvandoda](https://github.com/irvandoda)
+
+**💡 Free Consultation:** Contact me for a free initial consultation about your WordPress project!
+
+---
+
+## 📞 Community Support
 
 - **Issues:** [GitHub Issues](https://github.com/irvandoda/wordpress-super-lightweight/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/irvandoda/wordpress-super-lightweight/discussions)
@@ -455,7 +487,10 @@ WordPress is released under the GPL v2 license:
 
 ## ⭐ Show Your Support
 
-If this project helped you, please give it a ⭐ on GitHub!
+If this project helped you, please:
+- Give it a ⭐ on GitHub
+- Share it with other WordPress developers
+- Consider hiring me for your next WordPress project! 😊
 
 ## 🔗 Links
 
@@ -466,6 +501,8 @@ If this project helped you, please give it a ⭐ on GitHub!
 
 ---
 
-**Made with ❤️ for the WordPress community**
+**Made with ❤️ by [Irvandoda](https://irvandoda.my.id) for the WordPress community**
 
 **WordPress Version:** 6.9.4 | **PHP Required:** 7.2.24+ | **MySQL Required:** 5.5.5+
+
+**Need help with WordPress?** Contact me: [irvando.d.a@gmail.com](mailto:irvando.d.a@gmail.com) | [WhatsApp](https://wa.me/6285747476308)
