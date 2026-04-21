@@ -135,19 +135,10 @@ define('DISALLOW_FILE_EDIT', true);
 // define('FORCE_SSL_ADMIN', true);
 
 /**
- * Disable XML-RPC
- * Prevents XML-RPC attacks and reduces server load
+ * Disable XML-RPC & Remove X-Pingback Header
+ * These optimizations are handled by wp-content/mu-plugins/wp-lightweight-optimization.php
+ * No need to add filters here (WordPress not loaded yet)
  */
-add_filter('xmlrpc_enabled', '__return_false');
-
-/**
- * Remove X-Pingback Header
- * Additional security measure
- */
-add_filter('wp_headers', function($headers) {
-    unset($headers['X-Pingback']);
-    return $headers;
-});
 
 // ============================================================================
 // DEBUG SETTINGS

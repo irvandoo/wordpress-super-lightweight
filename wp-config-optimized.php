@@ -79,14 +79,11 @@ define('DISALLOW_FILE_EDIT', true);
 // FEATURE DISABLING (LIGHTWEIGHT MODE)
 // ============================================================================
 
-// Disable XML-RPC (if not needed)
-add_filter('xmlrpc_enabled', '__return_false');
-
-// Disable pingbacks
-add_filter('wp_headers', function($headers) {
-    unset($headers['X-Pingback']);
-    return $headers;
-});
+/**
+ * Disable XML-RPC & Remove X-Pingback Header
+ * These optimizations are handled by wp-content/mu-plugins/wp-lightweight-optimization.php
+ * No need to add filters here (WordPress not loaded yet)
+ */
 
 // ============================================================================
 // DEBUG SETTINGS (PRODUCTION)
