@@ -38,12 +38,14 @@ wp-content/cache/
 # ============================================================================
 # PLUGINS & THEMES (PRIVATE DEVELOPMENT)
 # ============================================================================
-# Exclude all plugins and themes for private development
-# Only WordPress core and mu-plugins are public
+# Exclude all plugins except default structure
 wp-content/plugins/*
 !wp-content/plugins/.gitkeep
+
+# Exclude all themes EXCEPT Twenty Twenty-Five (default theme)
 wp-content/themes/*
 !wp-content/themes/.gitkeep
+!wp-content/themes/twentytwentyfive/
 
 # Keep mu-plugins (our optimizations) - these are public
 !wp-content/mu-plugins/
