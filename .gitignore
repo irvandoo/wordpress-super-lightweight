@@ -36,15 +36,16 @@ wp-content/blogs.dir/
 wp-content/cache/
 
 # ============================================================================
-# PLUGINS & THEMES (OPTIONAL)
+# PLUGINS & THEMES (PRIVATE DEVELOPMENT)
 # ============================================================================
-# Uncomment to exclude all plugins/themes and only track specific ones
-# wp-content/plugins/*
-# !wp-content/plugins/.gitkeep
-# wp-content/themes/*
-# !wp-content/themes/.gitkeep
+# Exclude all plugins and themes for private development
+# Only WordPress core and mu-plugins are public
+wp-content/plugins/*
+!wp-content/plugins/.gitkeep
+wp-content/themes/*
+!wp-content/themes/.gitkeep
 
-# Keep mu-plugins (our optimizations)
+# Keep mu-plugins (our optimizations) - these are public
 !wp-content/mu-plugins/
 
 # ============================================================================
