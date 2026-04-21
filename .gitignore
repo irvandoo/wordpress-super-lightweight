@@ -1,10 +1,11 @@
 # WordPress Super Lightweight - Git Ignore File
 
 # ============================================================================
-# DOCUMENTATION & INTERNAL FILES (DO NOT PUSH)
+# INTERNAL FILES (DO NOT PUSH)
 # ============================================================================
-docs/
 .kiro/
+
+# Note: docs/ folder is tracked for public documentation
 
 # ============================================================================
 # WORDPRESS CONFIGURATION (SENSITIVE)
