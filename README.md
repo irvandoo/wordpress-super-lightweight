@@ -433,13 +433,49 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is licensed under the GPL v2 or later - same as WordPress.
+### Dual License Structure
 
-WordPress is released under the GPL v2 license:
-- Free to use
-- Free to modify
-- Free to distribute
-- Must remain GPL
+This project uses a **dual license** approach:
+
+#### 1. WordPress Core - GPL v2
+WordPress core files are licensed under **GNU General Public License v2 (GPL v2)**.  
+See [LICENSE](LICENSE) file for full GPL v2 text.
+
+#### 2. Optimization Code - Free with Attribution
+The optimization components (mu-plugins, configurations) are licensed under **Free & Open Source with Attribution**.  
+See [LICENSE-OPTIMIZATION.md](LICENSE-OPTIMIZATION.md) for full terms.
+
+### 📝 Simple Terms:
+
+✅ **FREE to use** - Personal or commercial projects  
+✅ **FREE to modify** - Customize as you need  
+✅ **FREE to distribute** - Share with others  
+✅ **FREE to sell** - Use in paid services  
+
+**Only requirement:** Give credit with a link to [irvandoda.my.id](https://irvandoda.my.id)
+
+### How to Give Credit:
+
+**Option 1: Code Comment** (Minimum)
+```php
+/**
+ * WordPress Super Lightweight Optimization
+ * Original work by: Irvandoda (https://irvandoda.my.id)
+ */
+```
+
+**Option 2: Website Footer** (Recommended)
+```html
+<a href="https://irvandoda.my.id">WordPress Optimization by Irvandoda</a>
+```
+
+**Option 3: Documentation**
+```
+Based on WordPress Super Lightweight by Irvandoda
+https://irvandoda.my.id
+```
+
+**That's it!** Simple attribution = Free forever. Let's support each other! 🤝
 
 ## 🙏 Credits
 
