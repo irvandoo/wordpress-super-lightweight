@@ -31,35 +31,26 @@ function disable_gutenberg_editor() {
 add_action('init', 'disable_gutenberg_editor');
 
 /**
- * Remove Gutenberg CSS and JS
+ * Remove Gutenberg CSS and JS (FRONTEND ONLY)
  */
 function remove_gutenberg_assets() {
-    // Remove block library CSS
-    wp_dequeue_style('wp-block-library');
-    wp_dequeue_style('wp-block-library-theme');
-    wp_dequeue_style('wc-blocks-style'); // WooCommerce blocks
-    wp_dequeue_style('global-styles'); // Global styles
-    
-    // Remove classic theme styles
-    wp_dequeue_style('classic-theme-styles');
-    
-    // Remove SVG filters
-    remove_action('wp_enqueue_scripts', 'wp_enqueue_global_styles');
-    remove_action('wp_body_open', 'wp_global_styles_render_svg_filters');
+    // Only remove on frontend, keep admin functional
+    if (!is_admin()) {
+        // Remove block library CSS
+        wp_dequeue_style('wp-block-library');
+        wp_dequeue_style('wp-block-library-theme');
+        wp_dequeue_style('wc-blocks-style'); // WooCommerce blocks
+        wp_dequeue_style('global-styles'); // Global styles
+        
+        // Remove classic theme styles
+        wp_dequeue_style('classic-theme-styles');
+        
+        // Remove SVG filters
+        remove_action('wp_enqueue_scripts', 'wp_enqueue_global_styles');
+        remove_action('wp_body_open', 'wp_global_styles_render_svg_filters');
+    }
 }
 add_action('wp_enqueue_scripts', 'remove_gutenberg_assets', 100);
-add_action('admin_enqueue_scripts', 'remove_gutenberg_assets', 100);
-
-/**
- * Remove Gutenberg from admin
- */
-function remove_gutenberg_admin() {
-    // Remove block editor assets
-    wp_dequeue_style('wp-block-editor');
-    wp_dequeue_style('wp-editor');
-    wp_dequeue_script('wp-block-editor');
-}
-add_action('admin_enqueue_scripts', 'remove_gutenberg_admin', 100);
 
 // ============================================================================
 // 2. DISABLE EMBEDS
@@ -347,15 +338,20 @@ if (!defined('WP_POST_REVISIONS')) {
 // ============================================================================
 
 /**
- * Add defer attribute to scripts
+ * Add defer attribute to scripts (FRONTEND ONLY)
  */
 function defer_scripts($tag, $handle, $src) {
+    // Only defer on frontend, not in admin
+    if (is_admin()) {
+        return $tag;
+    }
+    
     // Don't defer jQuery (some plugins depend on it)
     if ('jquery' === $handle || 'jquery-core' === $handle) {
         return $tag;
     }
     
-    // Defer all other scripts
+    // Defer all other scripts on frontend
     if (strpos($tag, 'defer') === false) {
         return str_replace(' src', ' defer src', $tag);
     }
