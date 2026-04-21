@@ -67,6 +67,39 @@ This is a **heavily optimized WordPress 6.9.4** installation designed for maximu
 
 ### Installation
 
+**Method 1: Quick Setup (Recommended)**
+
+1. **Edit database credentials:**
+```bash
+# Open wp-config-renameit.php in text editor
+# Change these 4 lines:
+DB_NAME: 'your_database_name'
+DB_USER: 'your_database_user'
+DB_PASSWORD: 'your_database_password'
+DB_HOST: 'localhost' (or your host)
+```
+
+2. **Rename the config file:**
+```bash
+# Windows
+ren wp-config-renameit.php wp-config.php
+
+# Linux/Mac
+mv wp-config-renameit.php wp-config.php
+```
+
+3. **Visit your site and install:**
+```
+http://your-domain.com/
+```
+Complete the 5-minute WordPress installation wizard.
+
+4. **Done!** Your optimized WordPress is ready! ⚡
+
+---
+
+**Method 2: Manual Setup**
+
 1. **Clone this repository:**
 ```bash
 git clone https://github.com/irvandoda/wordpress-super-lightweight.git
