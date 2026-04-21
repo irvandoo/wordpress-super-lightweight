@@ -98,7 +98,8 @@ define('WP_MAX_MEMORY_LIMIT', '256M');
  * Disable WP-Cron and use real server cron for better performance
  * 
  * IMPORTANT: After installation, setup real cron job:
- * Add to crontab: */15 * * * * wget -q -O - http://yourdomain.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1
+ * Add to crontab (replace STAR with asterisk *):
+ * STAR/15 * * * * wget -q -O - http://yourdomain.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1
  */
 define('DISABLE_WP_CRON', true);
 

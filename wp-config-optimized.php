@@ -56,7 +56,7 @@ define('WP_MEMORY_LIMIT', '128M');
 define('WP_MAX_MEMORY_LIMIT', '256M');
 
 // Disable WordPress cron (use real cron instead)
-// Add to system cron: */15 * * * * wget -q -O - http://yourdomain.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1
+// Add to system cron (replace STAR with *): STAR/15 * * * * wget -q -O - http://yourdomain.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1
 define('DISABLE_WP_CRON', true);
 
 // Optimize database queries
