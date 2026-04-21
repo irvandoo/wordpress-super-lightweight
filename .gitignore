@@ -5,7 +5,8 @@
 # ============================================================================
 .kiro/
 
-# Note: docs/ folder is tracked for public documentation
+# Documentation (PRIVATE - not for public repository)
+docs/
 
 # ============================================================================
 # WORDPRESS CONFIGURATION (SENSITIVE)

@@ -159,6 +159,12 @@ Visit your site URL in browser and complete the 5-minute installation.
 - **wp-content/mu-plugins/wp-lightweight-optimization.php** - Core optimization plugin
 - **wp-content/mu-plugins/database-optimization.php** - Database & N+1 query solver
 
+### Documentation
+- Complete documentation available locally in `docs/` folder
+- Installation guides and optimization details
+- Performance benchmarks and troubleshooting
+- Private documentation (not included in public repository)
+
 ### Must-Use Plugins (Auto-loaded)
 
 #### 1. WordPress Lightweight Optimization (12.68 KB)
