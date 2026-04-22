@@ -13,6 +13,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="profile" href="https://gmpg.org/xfn/11">
     
+    <!-- IDA Design System CSS - Force Load -->
+    <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/assets/css/ida-design-system.css?v=<?php echo time(); ?>" type="text/css" media="all">
+    
     <?php wp_head(); ?>
 </head>
 

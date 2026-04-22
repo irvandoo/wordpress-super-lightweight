@@ -57,40 +57,15 @@ require_once IDA_THEME_DIR . '/inc/admin-style.php';
  */
 function ida_enqueue_design_system(): void
 {
-    // Main IDA Design System CSS
+    // Main IDA Design System CSS - FORCE LOAD
     wp_enqueue_style(
         'ida-design-system',
-        IDA_THEME_URI . '/assets/css/ida-design-system.css',
+        get_template_directory_uri() . '/assets/css/ida-design-system.css',
         [],
-        IDA_VERSION
+        filemtime(get_template_directory() . '/assets/css/ida-design-system.css') // Cache busting
     );
-    
-    // Critical CSS inline for above-the-fold content
-    $critical_css = ida_get_critical_css();
-    if ($critical_css) {
-        wp_add_inline_style('ida-design-system', $critical_css);
-    }
 }
 add_action('wp_enqueue_scripts', 'ida_enqueue_design_system', 1);
-
-/**
- * Get Critical CSS for above-the-fold content
- */
-function ida_get_critical_css(): string
-{
-    return '
-    :root{--ida-bg:#ffffff;--ida-text:#111111;--ida-muted:#6b7280;--ida-accent:#2563eb;--ida-accent-soft:#eff6ff;--ida-border:#e5e7eb;--ida-space-md:16px;--ida-space-lg:24px;--ida-space-xl:32px;--ida-font-family:system-ui,-apple-system,sans-serif;--ida-font-size-sm:16px;--ida-font-size-lg:20px;--ida-font-size-xl:24px;--ida-font-size-2xl:28px;--ida-font-size-3xl:34px;--ida-max-width:780px;--ida-line-height:1.7;--ida-border-radius:8px;--ida-transition:0.2s ease}
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{font-size:16px;scroll-behavior:smooth}
-    body{font-family:var(--ida-font-family);font-size:var(--ida-font-size-sm);line-height:var(--ida-line-height);color:var(--ida-text);background-color:var(--ida-bg);-webkit-font-smoothing:antialiased}
-    .ida-container{max-width:var(--ida-max-width);margin:0 auto;padding:0 var(--ida-space-md)}
-    .ida-header{background:rgba(255,255,255,0.95);border-bottom:1px solid var(--ida-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
-    .ida-header-inner{display:flex;align-items:center;justify-content:space-between;padding:var(--ida-space-md) 0;min-height:60px}
-    .ida-logo{font-size:var(--ida-font-size-xl);font-weight:700;color:var(--ida-text);text-decoration:none}
-    .ida-hero{padding:var(--ida-space-xl) 0;text-align:center}
-    .ida-hero-title{font-size:var(--ida-font-size-3xl);font-weight:700;line-height:1.2;margin-bottom:var(--ida-space-lg);color:var(--ida-text)}
-    ';
-}
 
 /**
  * Generate Table of Contents from content
