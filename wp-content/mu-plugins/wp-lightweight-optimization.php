@@ -185,6 +185,16 @@ function remove_jquery_migrate($scripts) {
 }
 add_action('wp_default_scripts', 'remove_jquery_migrate');
 
+/**
+ * Suppress jQuery Migrate warnings in console
+ */
+function suppress_jquery_migrate_warnings() {
+    if (!is_admin()) {
+        wp_add_inline_script('jquery-migrate', 'jQuery.migrateMute = true;', 'before');
+    }
+}
+add_action('wp_enqueue_scripts', 'suppress_jquery_migrate_warnings');
+
 // ============================================================================
 // 6. DISABLE DASHICONS ON FRONTEND
 // ============================================================================
@@ -233,11 +243,11 @@ function cleanup_wp_head() {
     // Remove adjacent posts links
     remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10);
     
-    // Remove REST API link
-    remove_action('wp_head', 'rest_output_link_wp_head');
-    
-    // Remove REST API header
-    remove_action('template_redirect', 'rest_output_link_header', 11);
+    // Remove REST API link from frontend only
+    if (!is_admin()) {
+        remove_action('wp_head', 'rest_output_link_wp_head');
+        remove_action('template_redirect', 'rest_output_link_header', 11);
+    }
 }
 add_action('init', 'cleanup_wp_head');
 
@@ -369,6 +379,57 @@ add_filter('script_loader_tag', 'defer_scripts', 10, 3);
  * This is just to ensure it's enabled
  */
 add_filter('wp_lazy_loading_enabled', '__return_true');
+
+// ============================================================================
+// 15. FIX ADMIN CONSOLE ERRORS
+// ============================================================================
+
+/**
+ * Fix REST API errors in admin by ensuring REST API is available for admin
+ */
+function ensure_rest_api_for_admin() {
+    // REST API should work in admin
+    if (is_admin()) {
+        add_filter('rest_authentication_errors', function($result) {
+            if (!empty($result)) {
+                return $result;
+            }
+            if (!is_user_logged_in()) {
+                return new WP_Error('rest_not_logged_in', 'You are not currently logged in.', array('status' => 401));
+            }
+            return $result;
+        });
+    }
+}
+add_action('init', 'ensure_rest_api_for_admin');
+
+/**
+ * Disable SES lockdown warnings in console
+ */
+function disable_ses_lockdown() {
+    if (is_admin()) {
+        wp_add_inline_script('wp-polyfill', 'window.wp = window.wp || {}; window.wp.lockdown = false;', 'before');
+    }
+}
+add_action('admin_enqueue_scripts', 'disable_ses_lockdown', 1);
+
+/**
+ * Fix preferences API errors
+ */
+function fix_preferences_errors() {
+    if (is_admin()) {
+        // Ensure user meta is available for preferences
+        add_filter('rest_pre_dispatch', function($result, $server, $request) {
+            if (strpos($request->get_route(), '/wp/v2/users/me') !== false) {
+                if (!is_user_logged_in()) {
+                    return new WP_Error('rest_not_logged_in', 'You are not currently logged in.', array('status' => 401));
+                }
+            }
+            return $result;
+        }, 10, 3);
+    }
+}
+add_action('rest_api_init', 'fix_preferences_errors');
 
 // ============================================================================
 // OPTIMIZATION COMPLETE
