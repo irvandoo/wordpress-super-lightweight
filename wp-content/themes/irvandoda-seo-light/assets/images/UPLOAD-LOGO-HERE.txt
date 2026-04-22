@@ -1,0 +1,31 @@
+========================================
+  UPLOAD YOUR LOGO HERE
+========================================
+
+REQUIRED FILENAME: irvandodalogo.png
+
+RECOMMENDED SPECIFICATIONS:
+- Format: PNG with transparent background
+- Dimensions: 320x120px (or maintain 8:3 aspect ratio)
+- File size: < 500KB for optimal performance
+- Color mode: RGB
+
+USAGE:
+This logo will be used in:
+1. Login page (320x120px)
+2. Admin bar (auto-resized to 20x20px)
+3. Welcome panel (180px width)
+4. Theme settings page
+
+CURRENT STATUS:
+- SVG placeholder is currently active
+- Upload irvandodalogo.png to replace it
+
+ALTERNATIVE METHOD:
+You can also set logo via WordPress Admin:
+Appearance → Theme Settings → General → Site Logo URL
+
+========================================
+Contact: irvando.d.a@gmail.com
+Website: https://irvandoda.my.id
+========================================

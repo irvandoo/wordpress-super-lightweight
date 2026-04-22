@@ -44,10 +44,11 @@ wp-content/cache/
 wp-content/plugins/*
 !wp-content/plugins/.gitkeep
 
-# Exclude all themes EXCEPT Twenty Twenty-Five (default theme)
+# Exclude all themes EXCEPT Twenty Twenty-Five (default theme) and Irvandoda SEO Light (custom theme)
 wp-content/themes/*
 !wp-content/themes/.gitkeep
 !wp-content/themes/twentytwentyfive/
+!wp-content/themes/irvandoda-seo-light/
 
 # Keep mu-plugins (our optimizations) - these are public
 !wp-content/mu-plugins/

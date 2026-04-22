@@ -1,0 +1,580 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Irvandoda Full SEO Lightweight Theme Functions
+ * IDA Design System Implementation
+ * Built for Speed, Structured for Ranking
+ * 
+ * @package Irvandoda_SEO_Light
+ * @author Irvando Demas Arifiandani
+ * @since 1.0.0
+ */
+
+// Prevent direct access
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+// Require PHP 8.5+
+if (version_compare(PHP_VERSION, '8.5.0', '<')) {
+    add_action('admin_notices', function() {
+        echo '<div class="error"><p>';
+        echo esc_html__('Irvandoda SEO Light theme requires PHP 8.5 or higher. Please upgrade your PHP version.', 'irvandoda-seo-light');
+        echo '</p></div>';
+    });
+    return;
+}
+
+// Theme constants
+define('IDA_VERSION', '1.0.0');
+define('IDA_THEME_DIR', get_template_directory());
+define('IDA_THEME_URI', get_template_directory_uri());
+define('IDA_MIN_PHP', '8.5.0');
+
+// Load core files (comment out missing files temporarily)
+// require_once IDA_THEME_DIR . '/inc/setup.php';
+// require_once IDA_THEME_DIR . '/inc/enqueue.php';
+// require_once IDA_THEME_DIR . '/inc/performance.php';
+// require_once IDA_THEME_DIR . '/inc/seo.php';
+// require_once IDA_THEME_DIR . '/inc/schema.php';
+// require_once IDA_THEME_DIR . '/inc/toc.php';
+// require_once IDA_THEME_DIR . '/inc/breadcrumb.php';
+// require_once IDA_THEME_DIR . '/inc/helpers.php';
+require_once IDA_THEME_DIR . '/inc/admin.php';
+require_once IDA_THEME_DIR . '/inc/branding.php';
+require_once IDA_THEME_DIR . '/inc/admin-style.php';
+
+/**
+ * ========================================
+ * IDA DESIGN SYSTEM CORE FUNCTIONS
+ * ========================================
+ */
+
+/**
+ * Enqueue IDA Design System Styles
+ */
+function ida_enqueue_design_system(): void
+{
+    // Main IDA Design System CSS
+    wp_enqueue_style(
+        'ida-design-system',
+        IDA_THEME_URI . '/assets/css/ida-design-system.css',
+        [],
+        IDA_VERSION
+    );
+    
+    // Critical CSS inline for above-the-fold content
+    $critical_css = ida_get_critical_css();
+    if ($critical_css) {
+        wp_add_inline_style('ida-design-system', $critical_css);
+    }
+}
+add_action('wp_enqueue_scripts', 'ida_enqueue_design_system', 1);
+
+/**
+ * Get Critical CSS for above-the-fold content
+ */
+function ida_get_critical_css(): string
+{
+    return '
+    :root{--ida-bg:#ffffff;--ida-text:#111111;--ida-muted:#6b7280;--ida-accent:#2563eb;--ida-accent-soft:#eff6ff;--ida-border:#e5e7eb;--ida-space-md:16px;--ida-space-lg:24px;--ida-space-xl:32px;--ida-font-family:system-ui,-apple-system,sans-serif;--ida-font-size-sm:16px;--ida-font-size-lg:20px;--ida-font-size-xl:24px;--ida-font-size-2xl:28px;--ida-font-size-3xl:34px;--ida-max-width:780px;--ida-line-height:1.7;--ida-border-radius:8px;--ida-transition:0.2s ease}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:16px;scroll-behavior:smooth}
+    body{font-family:var(--ida-font-family);font-size:var(--ida-font-size-sm);line-height:var(--ida-line-height);color:var(--ida-text);background-color:var(--ida-bg);-webkit-font-smoothing:antialiased}
+    .ida-container{max-width:var(--ida-max-width);margin:0 auto;padding:0 var(--ida-space-md)}
+    .ida-header{background:rgba(255,255,255,0.95);border-bottom:1px solid var(--ida-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+    .ida-header-inner{display:flex;align-items:center;justify-content:space-between;padding:var(--ida-space-md) 0;min-height:60px}
+    .ida-logo{font-size:var(--ida-font-size-xl);font-weight:700;color:var(--ida-text);text-decoration:none}
+    .ida-hero{padding:var(--ida-space-xl) 0;text-align:center}
+    .ida-hero-title{font-size:var(--ida-font-size-3xl);font-weight:700;line-height:1.2;margin-bottom:var(--ida-space-lg);color:var(--ida-text)}
+    ';
+}
+
+/**
+ * Generate Table of Contents from content
+ */
+function ida_generate_toc(string $content): string
+{
+    if (empty($content)) {
+        return '';
+    }
+    
+    // Extract headings (H2 and H3 only for clean TOC)
+    preg_match_all('/<h([2-3])[^>]*>(.*?)<\/h[2-3]>/i', $content, $matches, PREG_SET_ORDER);
+    
+    if (empty($matches)) {
+        return '';
+    }
+    
+    $toc = '';
+    $current_level = 0;
+    
+    foreach ($matches as $match) {
+        $level = (int) $match[1];
+        $title = strip_tags($match[2]);
+        $anchor = sanitize_title($title);
+        
+        // Add anchor to original content
+        $content = str_replace(
+            $match[0],
+            '<h' . $level . ' id="' . $anchor . '">' . $match[2] . '</h' . $level . '>',
+            $content
+        );
+        
+        if ($level > $current_level) {
+            $toc .= '<ol>';
+        } elseif ($level < $current_level) {
+            $toc .= '</ol>';
+        }
+        
+        $toc .= '<li><a href="#' . $anchor . '">' . esc_html($title) . '</a></li>';
+        $current_level = $level;
+    }
+    
+    // Close remaining lists
+    while ($current_level > 0) {
+        $toc .= '</ol>';
+        $current_level--;
+    }
+    
+    return $toc;
+}
+
+/**
+ * Get reading time estimate
+ */
+function ida_get_reading_time(?int $post_id = null): int
+{
+    if (!$post_id) {
+        $post_id = get_the_ID();
+    }
+    
+    $content = get_post_field('post_content', $post_id);
+    $word_count = str_word_count(strip_tags($content));
+    
+    // Average reading speed: 200 words per minute
+    $reading_time = ceil($word_count / 200);
+    
+    return max(1, $reading_time); // Minimum 1 minute
+}
+
+/**
+ * Generate breadcrumb navigation
+ */
+function ida_breadcrumb(): void
+{
+    if (is_front_page()) {
+        return;
+    }
+    
+    $breadcrumb = '<a href="' . home_url('/') . '">Home</a>';
+    $breadcrumb .= '<span class="ida-breadcrumb-separator">›</span>';
+    
+    if (is_category()) {
+        $breadcrumb .= '<span>' . single_cat_title('', false) . '</span>';
+    } elseif (is_single()) {
+        $categories = get_the_category();
+        if (!empty($categories)) {
+            $category = $categories[0];
+            $breadcrumb .= '<a href="' . get_category_link($category->term_id) . '">' . $category->name . '</a>';
+            $breadcrumb .= '<span class="ida-breadcrumb-separator">›</span>';
+        }
+        $breadcrumb .= '<span>' . get_the_title() . '</span>';
+    } elseif (is_page()) {
+        $breadcrumb .= '<span>' . get_the_title() . '</span>';
+    } elseif (is_search()) {
+        $breadcrumb .= '<span>Search Results for "' . get_search_query() . '"</span>';
+    } elseif (is_404()) {
+        $breadcrumb .= '<span>Page Not Found</span>';
+    }
+    
+    echo '<div class="ida-breadcrumb">' . $breadcrumb . '</div>';
+}
+
+/**
+ * Add inline engagement blocks to content
+ */
+function ida_add_inline_engagement(string $content): string
+{
+    // Split content by paragraphs
+    $paragraphs = explode('</p>', $content);
+    $paragraph_count = count($paragraphs);
+    
+    // Add engagement blocks every 3-4 paragraphs
+    $engagement_positions = [
+        floor($paragraph_count * 0.25), // 25% through
+        floor($paragraph_count * 0.5),  // 50% through
+        floor($paragraph_count * 0.75), // 75% through
+    ];
+    
+    foreach ($engagement_positions as $position) {
+        if (isset($paragraphs[$position])) {
+            $engagement_block = '
+            <div class="ida-inline-block ida-tip">
+                <div class="ida-inline-block-title">💡 Pro Tip</div>
+                <p>This article contains actionable insights. Keep reading to discover more valuable strategies!</p>
+            </div>';
+            
+            $paragraphs[$position] .= $engagement_block;
+        }
+    }
+    
+    return implode('</p>', $paragraphs);
+}
+
+/**
+ * Add internal link suggestions
+ */
+function ida_add_internal_links(string $content): string
+{
+    // Get related posts based on categories/tags
+    $related_posts = ida_get_related_posts(get_the_ID(), 3);
+    
+    if (empty($related_posts)) {
+        return $content;
+    }
+    
+    // Add internal links after first paragraph
+    $first_p_pos = strpos($content, '</p>');
+    if ($first_p_pos !== false) {
+        $internal_links = '<div class="ida-internal-links">';
+        foreach ($related_posts as $post) {
+            $internal_links .= '<a href="' . get_permalink($post) . '" class="ida-internal-link">';
+            $internal_links .= '📖 ' . get_the_title($post) . '</a>';
+        }
+        $internal_links .= '</div>';
+        
+        $content = substr_replace($content, '</p>' . $internal_links, $first_p_pos, 4);
+    }
+    
+    return $content;
+}
+
+/**
+ * Apply TOC anchors to content headings
+ */
+function ida_apply_toc_anchors(string $content): string
+{
+    // Add IDs to headings for TOC navigation
+    $content = preg_replace_callback(
+        '/<h([2-3])[^>]*>(.*?)<\/h[2-3]>/i',
+        function($matches) {
+            $level = $matches[1];
+            $title = strip_tags($matches[2]);
+            $anchor = sanitize_title($title);
+            
+            return '<h' . $level . ' id="' . $anchor . '">' . $matches[2] . '</h' . $level . '>';
+        },
+        $content
+    );
+    
+    return $content;
+}
+function ida_get_related_posts(int $post_id, int $limit = 4): array
+{
+    $categories = wp_get_post_categories($post_id);
+    $tags = wp_get_post_tags($post_id);
+    
+    $args = [
+        'post_type' => 'post',
+        'post_status' => 'publish',
+        'posts_per_page' => $limit,
+        'post__not_in' => [$post_id],
+        'meta_query' => [
+            [
+                'key' => '_thumbnail_id',
+                'compare' => 'EXISTS'
+            ]
+        ]
+    ];
+    
+    // Prioritize posts with same categories
+    if (!empty($categories)) {
+        $args['category__in'] = $categories;
+    } elseif (!empty($tags)) {
+        $tag_ids = array_map(function($tag) { return $tag->term_id; }, $tags);
+        $args['tag__in'] = $tag_ids;
+    }
+    
+    $query = new WP_Query($args);
+    return $query->posts;
+}
+
+/**
+ * ========================================
+ * THEME SETUP & SUPPORT
+ * ========================================
+ */
+
+/**
+ * Theme setup
+ */
+function ida_theme_setup(): void
+{
+    // Add theme support
+    add_theme_support('automatic-feed-links');
+    add_theme_support('title-tag');
+    add_theme_support('post-thumbnails');
+    add_theme_support('html5', [
+        'search-form',
+        'comment-form',
+        'comment-list',
+        'gallery',
+        'caption',
+        'style',
+        'script',
+    ]);
+    add_theme_support('customize-selective-refresh-widgets');
+    add_theme_support('custom-logo');
+    add_theme_support('responsive-embeds');
+    add_theme_support('wp-block-styles');
+    add_theme_support('align-wide');
+    
+    // Register navigation menus
+    register_nav_menus([
+        'menu-1' => esc_html__('Primary', 'irvandoda-seo-light'),
+        'footer-menu' => esc_html__('Footer Menu', 'irvandoda-seo-light'),
+    ]);
+    
+    // Add image sizes
+    add_image_size('ida-featured', 780, 400, true);
+    add_image_size('ida-thumbnail', 300, 200, true);
+}
+add_action('after_setup_theme', 'ida_theme_setup');
+
+/**
+ * Register widget areas
+ */
+function ida_widgets_init(): void
+{
+    register_sidebar([
+        'name'          => esc_html__('Sidebar', 'irvandoda-seo-light'),
+        'id'            => 'sidebar-1',
+        'description'   => esc_html__('Add widgets here.', 'irvandoda-seo-light'),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h2 class="widget-title">',
+        'after_title'   => '</h2>',
+    ]);
+}
+add_action('widgets_init', 'ida_widgets_init');
+
+/**
+ * ========================================
+ * PERFORMANCE OPTIMIZATIONS
+ * ========================================
+ */
+
+/**
+ * Optimize WordPress for performance
+ */
+function ida_performance_optimizations(): void
+{
+    // Remove unnecessary WordPress features
+    remove_action('wp_head', 'wp_generator');
+    remove_action('wp_head', 'wlwmanifest_link');
+    remove_action('wp_head', 'rsd_link');
+    remove_action('wp_head', 'wp_shortlink_wp_head');
+    
+    // Disable emojis
+    remove_action('wp_head', 'print_emoji_detection_script', 7);
+    remove_action('wp_print_styles', 'print_emoji_styles');
+    remove_action('admin_print_scripts', 'print_emoji_detection_script');
+    remove_action('admin_print_styles', 'print_emoji_styles');
+    
+    // Remove jQuery migrate
+    add_action('wp_default_scripts', function($scripts) {
+        if (!is_admin() && isset($scripts->registered['jquery'])) {
+            $script = $scripts->registered['jquery'];
+            if ($script->deps) {
+                $script->deps = array_diff($script->deps, ['jquery-migrate']);
+            }
+        }
+    });
+}
+add_action('init', 'ida_performance_optimizations');
+
+/**
+ * Defer JavaScript loading
+ */
+function ida_defer_scripts(string $tag, string $handle, string $src): string
+{
+    // Don't defer admin scripts or jQuery
+    if (is_admin() || in_array($handle, ['jquery', 'jquery-core'])) {
+        return $tag;
+    }
+    
+    // Add defer attribute
+    return str_replace(' src', ' defer src', $tag);
+}
+add_filter('script_loader_tag', 'ida_defer_scripts', 10, 3);
+
+/**
+ * ========================================
+ * SEO OPTIMIZATIONS
+ * ========================================
+ */
+
+/**
+ * Add structured data (JSON-LD)
+ */
+function ida_add_structured_data(): void
+{
+    if (is_single()) {
+        global $post;
+        
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => get_the_title(),
+            'description' => wp_trim_words(get_the_excerpt(), 20),
+            'author' => [
+                '@type' => 'Person',
+                'name' => get_the_author(),
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => get_bloginfo('name'),
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => get_site_icon_url(),
+                ],
+            ],
+            'datePublished' => get_the_date('c'),
+            'dateModified' => get_the_modified_date('c'),
+            'mainEntityOfPage' => get_permalink(),
+        ];
+        
+        if (has_post_thumbnail()) {
+            $schema['image'] = get_the_post_thumbnail_url(null, 'large');
+        }
+        
+        echo '<script type="application/ld+json">' . json_encode($schema, JSON_UNESCAPED_SLASHES) . '</script>';
+    }
+}
+add_action('wp_head', 'ida_add_structured_data');
+
+/**
+ * ========================================
+ * CUSTOMIZER SETTINGS
+ * ========================================
+ */
+
+/**
+ * Add customizer settings
+ */
+function ida_customize_register(WP_Customize_Manager $wp_customize): void
+{
+    // IDA Design System Section
+    $wp_customize->add_section('ida_design_system', [
+        'title' => __('IDA Design System', 'irvandoda-seo-light'),
+        'priority' => 30,
+    ]);
+    
+    // Accent Color
+    $wp_customize->add_setting('ida_accent_color', [
+        'default' => '#2563eb',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'ida_accent_color', [
+        'label' => __('Accent Color', 'irvandoda-seo-light'),
+        'section' => 'ida_design_system',
+    ]));
+    
+    // Footer Text
+    $wp_customize->add_setting('ida_footer_text', [
+        'default' => '',
+        'sanitize_callback' => 'wp_kses_post',
+    ]);
+    
+    $wp_customize->add_control('ida_footer_text', [
+        'label' => __('Footer Text', 'irvandoda-seo-light'),
+        'section' => 'ida_design_system',
+        'type' => 'textarea',
+    ]);
+}
+add_action('customize_register', 'ida_customize_register');
+
+/**
+ * Output custom CSS for customizer settings
+ */
+function ida_customizer_css(): void
+{
+    $accent_color = get_theme_mod('ida_accent_color', '#2563eb');
+    
+    if ($accent_color !== '#2563eb') {
+        echo '<style type="text/css">';
+        echo ':root { --ida-accent: ' . esc_attr($accent_color) . '; }';
+        echo '</style>';
+    }
+}
+add_action('wp_head', 'ida_customizer_css');
+
+/**
+ * ========================================
+ * SECURITY ENHANCEMENTS
+ * ========================================
+ */
+
+/**
+ * Security headers
+ */
+function ida_security_headers(): void
+{
+    if (!is_admin()) {
+        header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: SAMEORIGIN');
+        header('X-XSS-Protection: 1; mode=block');
+        header('Referrer-Policy: strict-origin-when-cross-origin');
+    }
+}
+add_action('send_headers', 'ida_security_headers');
+
+/**
+ * Remove WordPress version from scripts and styles
+ */
+function ida_remove_version_strings(string $src): string
+{
+    global $wp_version;
+    parse_str(parse_url($src, PHP_URL_QUERY) ?? '', $query);
+    if (!empty($query['ver']) && $query['ver'] === $wp_version) {
+        $src = remove_query_arg('ver', $src);
+    }
+    return $src;
+}
+add_filter('script_loader_src', 'ida_remove_version_strings');
+add_filter('style_loader_src', 'ida_remove_version_strings');
+
+/**
+ * ========================================
+ * FINAL THEME INITIALIZATION
+ * ========================================
+ */
+
+/**
+ * Theme activation hook
+ */
+function ida_theme_activation(): void
+{
+    // Flush rewrite rules
+    flush_rewrite_rules();
+    
+    // Set default permalink structure
+    if (!get_option('permalink_structure')) {
+        update_option('permalink_structure', '/%postname%/');
+    }
+}
+add_action('after_switch_theme', 'ida_theme_activation');
+
+/**
+ * Theme deactivation hook
+ */
+function ida_theme_deactivation(): void
+{
+    // Flush rewrite rules
+    flush_rewrite_rules();
+}
+add_action('switch_theme', 'ida_theme_deactivation');
