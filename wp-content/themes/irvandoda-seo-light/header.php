@@ -1,7 +1,7 @@
 <?php
 /**
- * Header Template
- * IDA Design System - Minimal Elite Header
+ * Header Template - IDA Design System v2.0
+ * Structure: Top Nav → Header (Logo + Ad) → Main Nav → Breaking News
  * 
  * @package Irvandoda_SEO_Light
  */
@@ -23,281 +23,233 @@
 <?php wp_body_open(); ?>
 
 <div id="page" class="site">
-    <a class="skip-link screen-reader-text" href="#primary">
-        <?php esc_html_e('Skip to content', 'irvandoda-seo-light'); ?>
-    </a>
-
-    <header id="masthead" class="ida-header site-header">
+    
+    <!-- 1. TOP NAVIGATION BAR -->
+    <div class="ida-top-bar">
         <div class="ida-container">
-            <div class="ida-header-inner">
+            <div class="ida-top-bar-inner">
+                <div class="ida-top-bar-left">
+                    <span class="ida-top-date">
+                        <?php echo date_i18n('l, F j, Y'); ?>
+                    </span>
+                </div>
+                <div class="ida-top-bar-right">
+                    <?php
+                    wp_nav_menu([
+                        'theme_location' => 'top-menu',
+                        'menu_id'        => 'top-menu',
+                        'container'      => false,
+                        'fallback_cb'    => false,
+                        'depth'          => 1,
+                    ]);
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. HEADER (Logo + Ad Slot) -->
+    <header class="ida-header-main">
+        <div class="ida-container">
+            <div class="ida-header-content">
                 
                 <!-- Logo -->
-                <div class="site-branding">
+                <div class="ida-logo-wrapper">
                     <?php if (has_custom_logo()) : ?>
-                        <div class="site-logo">
-                            <?php the_custom_logo(); ?>
-                        </div>
+                        <?php the_custom_logo(); ?>
                     <?php else : ?>
-                        <h1 class="site-title">
-                            <a href="<?php echo esc_url(home_url('/')); ?>" class="ida-logo" rel="home">
-                                <?php bloginfo('name'); ?>
-                            </a>
-                        </h1>
+                        <a href="<?php echo esc_url(home_url('/')); ?>" class="ida-logo-text">
+                            <?php bloginfo('name'); ?>
+                        </a>
+                    <?php endif; ?>
+                    <?php if (get_bloginfo('description')) : ?>
+                        <p class="ida-tagline"><?php bloginfo('description'); ?></p>
                     <?php endif; ?>
                 </div>
 
-                <!-- Navigation -->
-                <nav id="site-navigation" class="ida-nav main-navigation" aria-label="<?php esc_attr_e('Primary menu', 'irvandoda-seo-light'); ?>">
+                <!-- Ad Slot (728x90 Leaderboard) -->
+                <div class="ida-ad-slot ida-ad-header">
+                    <?php if (is_active_sidebar('header-ad')) : ?>
+                        <?php dynamic_sidebar('header-ad'); ?>
+                    <?php else : ?>
+                        <div class="ida-ad-placeholder">
+                            <span>Header Ad 728x90</span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. MAIN NAVIGATION MENU -->
+    <nav class="ida-main-nav" id="main-navigation">
+        <div class="ida-container">
+            <div class="ida-main-nav-inner">
+                
+                <!-- Mobile Menu Toggle -->
+                <button class="ida-menu-toggle" aria-label="Toggle Menu" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <!-- Main Menu -->
+                <div class="ida-menu-wrapper">
                     <?php
                     wp_nav_menu([
                         'theme_location' => 'menu-1',
                         'menu_id'        => 'primary-menu',
                         'container'      => false,
-                        'fallback_cb'    => 'ida_fallback_menu',
-                        'depth'          => 1, // Single level only
+                        'menu_class'     => 'ida-menu',
+                        'fallback_cb'    => 'ida_default_menu',
+                        'depth'          => 2,
                     ]);
                     ?>
-                    
-                    <!-- Search Icon (Optional) -->
-                    <button class="ida-search-toggle" onclick="toggleSearch()" aria-label="Search">
-                        🔍
-                    </button>
-                </nav>
+                </div>
+
+                <!-- Search Icon -->
+                <button class="ida-search-toggle" onclick="toggleSearch()" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
 
             </div>
         </div>
-        
-        <!-- Search Form (Hidden by default) -->
-        <div class="ida-search-form" id="search-form" style="display: none;">
+
+        <!-- Search Form (Hidden) -->
+        <div class="ida-search-dropdown" id="search-dropdown" style="display: none;">
             <div class="ida-container">
-                <form role="search" method="get" class="search-form" action="<?php echo esc_url(home_url('/')); ?>">
-                    <label>
-                        <span class="screen-reader-text"><?php echo _x('Search for:', 'label', 'irvandoda-seo-light'); ?></span>
-                        <input type="search" 
-                               class="search-field" 
-                               placeholder="<?php echo esc_attr_x('Search articles...', 'placeholder', 'irvandoda-seo-light'); ?>" 
-                               value="<?php echo get_search_query(); ?>" 
-                               name="s" />
-                    </label>
-                    <input type="submit" class="search-submit" value="<?php echo esc_attr_x('Search', 'submit button', 'irvandoda-seo-light'); ?>" />
-                </form>
+                <?php get_search_form(); ?>
             </div>
         </div>
-    </header>
+    </nav>
 
+    <!-- 4. BREAKING NEWS / LATEST ARTICLES TICKER -->
+    <div class="ida-breaking-news">
+        <div class="ida-container">
+            <div class="ida-breaking-inner">
+                <span class="ida-breaking-label">Latest Articles</span>
+                <div class="ida-breaking-content">
+                    <?php
+                    $latest_posts = new WP_Query([
+                        'posts_per_page' => 5,
+                        'post_status' => 'publish',
+                        'orderby' => 'date',
+                        'order' => 'DESC'
+                    ]);
+                    
+                    if ($latest_posts->have_posts()) :
+                        echo '<div class="ida-ticker">';
+                        while ($latest_posts->have_posts()) : $latest_posts->the_post();
+                            echo '<a href="' . get_permalink() . '" class="ida-ticker-item">';
+                            echo '<span class="ida-ticker-icon">•</span>';
+                            echo get_the_title();
+                            echo '</a>';
+                        endwhile;
+                        echo '</div>';
+                        wp_reset_postdata();
+                    endif;
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
     <div id="content" class="site-content">
 
-<style>
-/* Header Specific Styles */
-.ida-header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: var(--ida-transition);
-}
-
-.ida-header.scrolled {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.site-logo img {
-    max-height: 40px;
-    width: auto;
-}
-
-.ida-search-toggle {
-    background: none;
-    border: none;
-    font-size: var(--ida-font-size-lg);
-    cursor: pointer;
-    padding: var(--ida-space-sm);
-    border-radius: var(--ida-border-radius);
-    transition: var(--ida-transition);
-}
-
-.ida-search-toggle:hover {
-    background: var(--ida-accent-soft);
-}
-
-.ida-search-form {
-    background: var(--ida-accent-soft);
-    border-top: 1px solid var(--ida-border);
-    padding: var(--ida-space-lg) 0;
-    animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.search-form {
-    display: flex;
-    gap: var(--ida-space-sm);
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.search-field {
-    flex: 1;
-    padding: var(--ida-space-sm) var(--ida-space-md);
-    border: 1px solid var(--ida-border);
-    border-radius: var(--ida-border-radius);
-    font-size: var(--ida-font-size-sm);
-}
-
-.search-submit {
-    padding: var(--ida-space-sm) var(--ida-space-lg);
-    background: var(--ida-accent);
-    color: white;
-    border: none;
-    border-radius: var(--ida-border-radius);
-    cursor: pointer;
-    font-weight: 500;
-    transition: var(--ida-transition);
-}
-
-.search-submit:hover {
-    background: #1d4ed8;
-}
-
-/* Mobile Header */
-@media (max-width: 767px) {
-    .ida-header-inner {
-        padding: var(--ida-space-sm) 0;
-    }
-    
-    .ida-logo {
-        font-size: var(--ida-font-size-lg);
-    }
-    
-    .ida-nav {
-        gap: var(--ida-space-sm);
-    }
-    
-    .search-form {
-        flex-direction: column;
-    }
-    
-    .search-field,
-    .search-submit {
-        width: 100%;
-    }
-}
-
-/* Skip Link */
-.skip-link {
-    position: absolute;
-    left: -9999px;
-    top: 1.5em;
-    z-index: 999999;
-    text-decoration: underline;
-}
-
-.skip-link:focus {
-    background: var(--ida-accent);
-    color: white;
-    left: 6px;
-    padding: 8px 16px;
-    text-decoration: none;
-    border-radius: var(--ida-border-radius);
-}
-
-/* Screen Reader Text */
-.screen-reader-text {
-    border: 0;
-    clip: rect(1px, 1px, 1px, 1px);
-    clip-path: inset(50%);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute !important;
-    width: 1px;
-    word-wrap: normal !important;
-}
-
-.screen-reader-text:focus {
-    background-color: #f1f1f1;
-    border-radius: 3px;
-    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
-    clip: auto !important;
-    clip-path: none;
-    color: #21759b;
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 700;
-    height: auto;
-    left: 5px;
-    line-height: normal;
-    padding: 15px 23px 14px;
-    text-decoration: none;
-    top: 5px;
-    width: auto;
-    z-index: 100000;
-}
-</style>
-
 <script>
-// Header Scroll Effect
-function handleHeaderScroll() {
-    const header = document.querySelector('.ida-header');
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
+// Mobile Menu Toggle
+function toggleMobileMenu() {
+    const menuWrapper = document.querySelector('.ida-menu-wrapper');
+    const menuToggle = document.querySelector('.ida-menu-toggle');
+    
+    menuWrapper.classList.toggle('active');
+    menuToggle.classList.toggle('active');
+    document.body.classList.toggle('menu-open');
 }
 
 // Search Toggle
 function toggleSearch() {
-    const searchForm = document.getElementById('search-form');
-    const searchField = searchForm.querySelector('.search-field');
+    const searchDropdown = document.getElementById('search-dropdown');
+    const searchField = searchDropdown.querySelector('input[type="search"]');
     
-    if (searchForm.style.display === 'none' || !searchForm.style.display) {
-        searchForm.style.display = 'block';
+    if (searchDropdown.style.display === 'none') {
+        searchDropdown.style.display = 'block';
         setTimeout(() => searchField.focus(), 100);
     } else {
-        searchForm.style.display = 'none';
+        searchDropdown.style.display = 'none';
     }
 }
-
-// Event Listeners
-window.addEventListener('scroll', handleHeaderScroll);
 
 // Close search on escape
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        const searchForm = document.getElementById('search-form');
-        searchForm.style.display = 'none';
+        document.getElementById('search-dropdown').style.display = 'none';
     }
 });
 
-// Close search when clicking outside
-document.addEventListener('click', function(e) {
-    const searchForm = document.getElementById('search-form');
-    const searchToggle = document.querySelector('.ida-search-toggle');
+// Sticky Navigation
+let lastScroll = 0;
+const mainNav = document.getElementById('main-navigation');
+
+window.addEventListener('scroll', function() {
+    const currentScroll = window.pageYOffset;
     
-    if (!searchForm.contains(e.target) && !searchToggle.contains(e.target)) {
-        searchForm.style.display = 'none';
+    if (currentScroll > 100) {
+        mainNav.classList.add('sticky');
+        
+        if (currentScroll > lastScroll) {
+            mainNav.classList.add('hide');
+        } else {
+            mainNav.classList.remove('hide');
+        }
+    } else {
+        mainNav.classList.remove('sticky');
+        mainNav.classList.remove('hide');
     }
+    
+    lastScroll = currentScroll;
 });
+
+// Breaking News Ticker Animation
+const ticker = document.querySelector('.ida-ticker');
+if (ticker) {
+    let scrollAmount = 0;
+    const scrollSpeed = 1;
+    
+    function autoScroll() {
+        scrollAmount += scrollSpeed;
+        if (scrollAmount >= ticker.scrollWidth / 2) {
+            scrollAmount = 0;
+        }
+        ticker.style.transform = `translateX(-${scrollAmount}px)`;
+        requestAnimationFrame(autoScroll);
+    }
+    
+    // Clone items for infinite scroll
+    const tickerItems = ticker.innerHTML;
+    ticker.innerHTML = tickerItems + tickerItems;
+    
+    autoScroll();
+}
 </script>
 
 <?php
 /**
- * Fallback menu if no menu is assigned
+ * Default menu fallback
  */
-function ida_fallback_menu() {
-    echo '<a href="' . esc_url(home_url('/')) . '">Home</a>';
-    if (get_option('show_on_front') === 'page') {
-        echo '<a href="' . esc_url(get_permalink(get_option('page_for_posts'))) . '">Blog</a>';
+function ida_default_menu() {
+    echo '<ul class="ida-menu">';
+    echo '<li><a href="' . home_url('/') . '">Home</a></li>';
+    
+    $categories = get_categories(['number' => 5]);
+    foreach ($categories as $category) {
+        echo '<li><a href="' . get_category_link($category->term_id) . '">' . $category->name . '</a></li>';
     }
+    
+    echo '</ul>';
 }
 ?>

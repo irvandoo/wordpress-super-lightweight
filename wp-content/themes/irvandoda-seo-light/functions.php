@@ -309,13 +309,15 @@ function ida_theme_setup(): void
     
     // Register navigation menus
     register_nav_menus([
-        'menu-1' => esc_html__('Primary', 'irvandoda-seo-light'),
+        'top-menu' => esc_html__('Top Menu', 'irvandoda-seo-light'),
+        'menu-1' => esc_html__('Primary Menu', 'irvandoda-seo-light'),
         'footer-menu' => esc_html__('Footer Menu', 'irvandoda-seo-light'),
     ]);
     
     // Add image sizes
     add_image_size('ida-featured', 780, 400, true);
     add_image_size('ida-thumbnail', 300, 200, true);
+    add_image_size('ida-medium', 600, 400, true);
 }
 add_action('after_setup_theme', 'ida_theme_setup');
 
@@ -324,6 +326,29 @@ add_action('after_setup_theme', 'ida_theme_setup');
  */
 function ida_widgets_init(): void
 {
+    // Header Ad Widget
+    register_sidebar([
+        'name'          => esc_html__('Header Ad', 'irvandoda-seo-light'),
+        'id'            => 'header-ad',
+        'description'   => esc_html__('728x90 Leaderboard ad in header', 'irvandoda-seo-light'),
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</div>',
+        'before_title'  => '<h3 class="widget-title">',
+        'after_title'   => '</h3>',
+    ]);
+    
+    // Content Ad 1
+    register_sidebar([
+        'name'          => esc_html__('Content Ad 1', 'irvandoda-seo-light'),
+        'id'            => 'content-ad-1',
+        'description'   => esc_html__('728x90 ad between content sections', 'irvandoda-seo-light'),
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</div>',
+        'before_title'  => '<h3 class="widget-title">',
+        'after_title'   => '</h3>',
+    ]);
+    
+    // Sidebar Widget
     register_sidebar([
         'name'          => esc_html__('Sidebar', 'irvandoda-seo-light'),
         'id'            => 'sidebar-1',
