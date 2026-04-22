@@ -446,6 +446,19 @@ Recommended CDN providers:
 
 ## 📝 Changelog
 
+### Version 1.1.0 (2026-04-22)
+
+**Latest Updates:**
+- ✅ MySQL upgraded to 9.1.0 (latest Innovation Release)
+- ✅ PHP 8.5.5 fully compatible
+- ✅ Professional admin dashboard styling (subtle & clean)
+- ✅ Custom theme: Irvandoda SEO Light
+- ✅ Custom branding system (login, admin bar, welcome panel)
+- ✅ Theme settings panel with 6 tabs
+- ✅ WordPress bloat removed (~65KB per page saved)
+- ✅ Performance optimizations enhanced
+- ✅ Apache & MySQL services configured for Laragon
+
 ### Version 1.0.0 (2026-04-21)
 
 **Initial Release:**
