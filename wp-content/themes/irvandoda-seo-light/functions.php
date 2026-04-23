@@ -710,3 +710,129 @@ function ida_theme_deactivation(): void
     flush_rewrite_rules();
 }
 add_action('switch_theme', 'ida_theme_deactivation');
+
+
+/**
+ * ========================================
+ * CUSTOM COMMENT TEMPLATE
+ * ========================================
+ */
+
+/**
+ * Custom comment callback
+ */
+function ida_custom_comment($comment, $args, $depth) {
+    $GLOBALS['comment'] = $comment;
+    ?>
+    <div <?php comment_class('comment-item'); ?> id="comment-<?php comment_ID(); ?>">
+        <?php echo get_avatar($comment, 48, '', '', ['class' => 'comment-avatar']); ?>
+        <div class="comment-content">
+            <div class="comment-meta">
+                <strong><?php comment_author(); ?></strong>
+                <span>• <?php comment_date('j F Y'); ?></span>
+            </div>
+            <?php comment_text(); ?>
+            <?php
+            comment_reply_link(array_merge($args, [
+                'depth' => $depth,
+                'max_depth' => $args['max_depth'],
+                'reply_text' => 'Balas',
+                'before' => '',
+                'after' => '',
+            ]));
+            ?>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * ========================================
+ * SINGLE POST CUSTOMIZER SETTINGS
+ * ========================================
+ */
+
+/**
+ * Add single post customizer settings
+ */
+function ida_single_post_customizer(WP_Customize_Manager $wp_customize): void
+{
+    // Single Post Section
+    $wp_customize->add_section('ida_single_post', [
+        'title' => __('Single Post Settings', 'irvandoda-seo-light'),
+        'priority' => 33,
+    ]);
+    
+    // Rating Text
+    $wp_customize->add_setting('ida_rating_text', [
+        'default' => 'Artikel ini telah divalidasi berdasarkan Core Update ' . date('F Y'),
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_rating_text', [
+        'label' => __('Rating Block Text', 'irvandoda-seo-light'),
+        'section' => 'ida_single_post',
+        'type' => 'text',
+    ]);
+    
+    // Highlight Text
+    $wp_customize->add_setting('ida_highlight_text', [
+        'default' => 'Implementasi strategi ini membutuhkan konsistensi. Hasil optimal biasanya terlihat dalam 2-3 bulan.',
+        'sanitize_callback' => 'sanitize_textarea_field',
+    ]);
+    
+    $wp_customize->add_control('ida_highlight_text', [
+        'label' => __('Highlight Box Text', 'irvandoda-seo-light'),
+        'section' => 'ida_single_post',
+        'type' => 'textarea',
+    ]);
+    
+    // Post CTA Title
+    $wp_customize->add_setting('ida_post_cta_title', [
+        'default' => 'Implementasikan Sistem Ini Tanpa Coding',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_post_cta_title', [
+        'label' => __('Post CTA Title', 'irvandoda-seo-light'),
+        'section' => 'ida_single_post',
+        'type' => 'text',
+    ]);
+    
+    // Post CTA Description
+    $wp_customize->add_setting('ida_post_cta_description', [
+        'default' => 'Tema Irvandoda didesain khusus secara otomatis menerapkan semua prinsip Dwell Time, Whitespace, dan Smart TOC.',
+        'sanitize_callback' => 'sanitize_textarea_field',
+    ]);
+    
+    $wp_customize->add_control('ida_post_cta_description', [
+        'label' => __('Post CTA Description', 'irvandoda-seo-light'),
+        'section' => 'ida_single_post',
+        'type' => 'textarea',
+    ]);
+    
+    // Post CTA Button
+    $wp_customize->add_setting('ida_post_cta_button', [
+        'default' => 'Download Theme Irvandoda Sekarang',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_post_cta_button', [
+        'label' => __('Post CTA Button Text', 'irvandoda-seo-light'),
+        'section' => 'ida_single_post',
+        'type' => 'text',
+    ]);
+    
+    // Post CTA Link
+    $wp_customize->add_setting('ida_post_cta_link', [
+        'default' => '#',
+        'sanitize_callback' => 'esc_url_raw',
+    ]);
+    
+    $wp_customize->add_control('ida_post_cta_link', [
+        'label' => __('Post CTA Button Link', 'irvandoda-seo-light'),
+        'section' => 'ida_single_post',
+        'type' => 'url',
+    ]);
+}
+add_action('customize_register', 'ida_single_post_customizer');
