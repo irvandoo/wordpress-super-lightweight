@@ -22,234 +22,122 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
-<div id="page" class="site">
-    
-    <!-- 1. TOP NAVIGATION BAR -->
-    <div class="ida-top-bar">
-        <div class="ida-container">
-            <div class="ida-top-bar-inner">
-                <div class="ida-top-bar-left">
-                    <span class="ida-top-date">
-                        <?php echo date_i18n('l, F j, Y'); ?>
-                    </span>
-                </div>
-                <div class="ida-top-bar-right">
-                    <?php
-                    wp_nav_menu([
-                        'theme_location' => 'top-menu',
-                        'menu_id'        => 'top-menu',
-                        'container'      => false,
-                        'fallback_cb'    => false,
-                        'depth'          => 1,
-                    ]);
-                    ?>
-                </div>
-            </div>
+<!-- TOP HEADER MENU -->
+<div class="top-header">
+    <div class="container top-header-inner">
+        <div><?php echo get_theme_mod('ida_top_header_text', 'Update Algoritma Terkini: ' . date('F Y')); ?></div>
+        <?php
+        wp_nav_menu([
+            'theme_location' => 'top-menu',
+            'menu_class'     => 'top-menu',
+            'container'      => false,
+            'fallback_cb'    => 'ida_top_menu_fallback',
+            'depth'          => 1,
+        ]);
+        ?>
+    </div>
+</div>
+
+<!-- HEADER: Logo & Ad Space -->
+<header class="site-header" id="header">
+    <div class="container header-inner">
+        <?php if (has_custom_logo()) : ?>
+            <?php the_custom_logo(); ?>
+        <?php else : ?>
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="logo">
+                <?php bloginfo('name'); ?>
+            </a>
+        <?php endif; ?>
+        
+        <div class="header-ad">
+            <?php if (is_active_sidebar('header-ad')) : ?>
+                <?php dynamic_sidebar('header-ad'); ?>
+            <?php else : ?>
+                [Tempat Iklan Banner 728x90]
+            <?php endif; ?>
         </div>
     </div>
+</header>
 
-    <!-- 2. HEADER (Logo + Ad Slot) -->
-    <header class="ida-header-main">
-        <div class="ida-container">
-            <div class="ida-header-content">
-                
-                <!-- Logo -->
-                <div class="ida-logo-wrapper">
-                    <?php if (has_custom_logo()) : ?>
-                        <?php the_custom_logo(); ?>
-                    <?php else : ?>
-                        <a href="<?php echo esc_url(home_url('/')); ?>" class="ida-logo-text">
-                            <?php bloginfo('name'); ?>
-                        </a>
-                    <?php endif; ?>
-                    <?php if (get_bloginfo('description')) : ?>
-                        <p class="ida-tagline"><?php bloginfo('description'); ?></p>
-                    <?php endif; ?>
-                </div>
+<!-- MAIN NAVIGATION -->
+<div class="main-nav-wrapper">
+    <div class="container">
+        <?php
+        wp_nav_menu([
+            'theme_location' => 'menu-1',
+            'menu_class'     => 'main-nav',
+            'container'      => false,
+            'fallback_cb'    => 'ida_main_menu_fallback',
+            'depth'          => 1,
+        ]);
+        ?>
+    </div>
+</div>
 
-                <!-- Ad Slot (728x90 Leaderboard) -->
-                <div class="ida-ad-slot ida-ad-header">
-                    <?php if (is_active_sidebar('header-ad')) : ?>
-                        <?php dynamic_sidebar('header-ad'); ?>
-                    <?php else : ?>
-                        <div class="ida-ad-placeholder">
-                            <span>Header Ad 728x90</span>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-            </div>
-        </div>
-    </header>
-
-    <!-- 3. MAIN NAVIGATION MENU -->
-    <nav class="ida-main-nav" id="main-navigation">
-        <div class="ida-container">
-            <div class="ida-main-nav-inner">
-                
-                <!-- Mobile Menu Toggle -->
-                <button class="ida-menu-toggle" aria-label="Toggle Menu" onclick="toggleMobileMenu()">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-
-                <!-- Main Menu -->
-                <div class="ida-menu-wrapper">
-                    <?php
-                    wp_nav_menu([
-                        'theme_location' => 'menu-1',
-                        'menu_id'        => 'primary-menu',
-                        'container'      => false,
-                        'menu_class'     => 'ida-menu',
-                        'fallback_cb'    => 'ida_default_menu',
-                        'depth'          => 2,
-                    ]);
-                    ?>
-                </div>
-
-                <!-- Search Icon -->
-                <button class="ida-search-toggle" onclick="toggleSearch()" aria-label="Search">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
-
-            </div>
-        </div>
-
-        <!-- Search Form (Hidden) -->
-        <div class="ida-search-dropdown" id="search-dropdown" style="display: none;">
-            <div class="ida-container">
-                <?php get_search_form(); ?>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 4. BREAKING NEWS / LATEST ARTICLES TICKER -->
-    <div class="ida-breaking-news">
-        <div class="ida-container">
-            <div class="ida-breaking-inner">
-                <span class="ida-breaking-label">Latest Articles</span>
-                <div class="ida-breaking-content">
-                    <?php
-                    $latest_posts = new WP_Query([
-                        'posts_per_page' => 5,
-                        'post_status' => 'publish',
-                        'orderby' => 'date',
-                        'order' => 'DESC'
-                    ]);
-                    
-                    if ($latest_posts->have_posts()) :
-                        echo '<div class="ida-ticker">';
-                        while ($latest_posts->have_posts()) : $latest_posts->the_post();
-                            echo '<a href="' . get_permalink() . '" class="ida-ticker-item">';
-                            echo '<span class="ida-ticker-icon">•</span>';
-                            echo get_the_title();
-                            echo '</a>';
-                        endwhile;
-                        echo '</div>';
-                        wp_reset_postdata();
-                    endif;
-                    ?>
-                </div>
-            </div>
+<!-- SUB NAVIGATION / BREAKING NEWS TICKER -->
+<div class="ticker-wrap">
+    <div class="container ticker-inner">
+        <span class="ticker-label">Terbaru</span>
+        <div class="ticker-text">
+            <?php
+            $latest_post = new WP_Query([
+                'posts_per_page' => 1,
+                'post_status' => 'publish',
+                'orderby' => 'date',
+                'order' => 'DESC'
+            ]);
+            
+            if ($latest_post->have_posts()) :
+                while ($latest_post->have_posts()) : $latest_post->the_post();
+                    echo '<a href="' . get_permalink() . '">🔥 ' . get_the_title() . '</a>';
+                endwhile;
+                wp_reset_postdata();
+            else :
+                echo '<a href="#">🔥 Selamat datang di ' . get_bloginfo('name') . '</a>';
+            endif;
+            ?>
         </div>
     </div>
-
-    <!-- Main Content Area -->
-    <div id="content" class="site-content">
+</div>
 
 <script>
-// Mobile Menu Toggle
-function toggleMobileMenu() {
-    const menuWrapper = document.querySelector('.ida-menu-wrapper');
-    const menuToggle = document.querySelector('.ida-menu-toggle');
-    
-    menuWrapper.classList.toggle('active');
-    menuToggle.classList.toggle('active');
-    document.body.classList.toggle('menu-open');
-}
-
-// Search Toggle
-function toggleSearch() {
-    const searchDropdown = document.getElementById('search-dropdown');
-    const searchField = searchDropdown.querySelector('input[type="search"]');
-    
-    if (searchDropdown.style.display === 'none') {
-        searchDropdown.style.display = 'block';
-        setTimeout(() => searchField.focus(), 100);
-    } else {
-        searchDropdown.style.display = 'none';
-    }
-}
-
-// Close search on escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        document.getElementById('search-dropdown').style.display = 'none';
-    }
-});
-
-// Sticky Navigation
-let lastScroll = 0;
-const mainNav = document.getElementById('main-navigation');
-
-window.addEventListener('scroll', function() {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-        mainNav.classList.add('sticky');
-        
-        if (currentScroll > lastScroll) {
-            mainNav.classList.add('hide');
+// Sticky Nav Shadow on Scroll
+document.addEventListener('DOMContentLoaded', () => {
+    const navWrapper = document.querySelector('.main-nav-wrapper');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 150) {
+            navWrapper.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
         } else {
-            mainNav.classList.remove('hide');
+            navWrapper.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)';
         }
-    } else {
-        mainNav.classList.remove('sticky');
-        mainNav.classList.remove('hide');
-    }
-    
-    lastScroll = currentScroll;
+    });
 });
-
-// Breaking News Ticker Animation
-const ticker = document.querySelector('.ida-ticker');
-if (ticker) {
-    let scrollAmount = 0;
-    const scrollSpeed = 1;
-    
-    function autoScroll() {
-        scrollAmount += scrollSpeed;
-        if (scrollAmount >= ticker.scrollWidth / 2) {
-            scrollAmount = 0;
-        }
-        ticker.style.transform = `translateX(-${scrollAmount}px)`;
-        requestAnimationFrame(autoScroll);
-    }
-    
-    // Clone items for infinite scroll
-    const tickerItems = ticker.innerHTML;
-    ticker.innerHTML = tickerItems + tickerItems;
-    
-    autoScroll();
-}
 </script>
 
 <?php
 /**
- * Default menu fallback
+ * Top menu fallback
  */
-function ida_default_menu() {
-    echo '<ul class="ida-menu">';
-    echo '<li><a href="' . home_url('/') . '">Home</a></li>';
+function ida_top_menu_fallback() {
+    echo '<ul class="top-menu">';
+    echo '<li><a href="' . home_url('/about') . '">Tentang Kami</a></li>';
+    echo '<li><a href="' . home_url('/contact') . '">Kontak</a></li>';
+    echo '</ul>';
+}
+
+/**
+ * Main menu fallback
+ */
+function ida_main_menu_fallback() {
+    echo '<ul class="main-nav">';
+    echo '<li><a href="' . home_url('/') . '">Beranda</a></li>';
     
-    $categories = get_categories(['number' => 5]);
+    $categories = get_categories(['number' => 4, 'hide_empty' => true]);
     foreach ($categories as $category) {
         echo '<li><a href="' . get_category_link($category->term_id) . '">' . $category->name . '</a></li>';
     }
     
+    echo '<li><a href="#" class="nav-cta">Download Blueprint</a></li>';
     echo '</ul>';
 }
 ?>

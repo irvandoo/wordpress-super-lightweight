@@ -484,16 +484,148 @@ function ida_customize_register(WP_Customize_Manager $wp_customize): void
         'section' => 'ida_design_system',
     ]));
     
-    // Footer Text
-    $wp_customize->add_setting('ida_footer_text', [
-        'default' => '',
-        'sanitize_callback' => 'wp_kses_post',
+    // Hero Section
+    $wp_customize->add_section('ida_hero_section', [
+        'title' => __('Hero Section', 'irvandoda-seo-light'),
+        'priority' => 31,
     ]);
     
-    $wp_customize->add_control('ida_footer_text', [
-        'label' => __('Footer Text', 'irvandoda-seo-light'),
-        'section' => 'ida_design_system',
+    // Hero Title
+    $wp_customize->add_setting('ida_hero_title', [
+        'default' => 'Theme WordPress Teringan yang Mendesain Ulang Algoritma SEO Anda.',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_hero_title', [
+        'label' => __('Hero Title', 'irvandoda-seo-light'),
+        'section' => 'ida_hero_section',
+        'type' => 'text',
+    ]);
+    
+    // Hero Description
+    $wp_customize->add_setting('ida_hero_description', [
+        'default' => 'Dibangun dengan filosofi Content-First dan Zero Distraction. Tingkatkan Dwell Time, CTR, dan dominasi SERP Google tanpa perlu plugin optimasi yang berat.',
+        'sanitize_callback' => 'sanitize_textarea_field',
+    ]);
+    
+    $wp_customize->add_control('ida_hero_description', [
+        'label' => __('Hero Description', 'irvandoda-seo-light'),
+        'section' => 'ida_hero_section',
         'type' => 'textarea',
+    ]);
+    
+    // Hero CTA Text
+    $wp_customize->add_setting('ida_hero_cta_text', [
+        'default' => 'Mulai Optimasi Sekarang',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_hero_cta_text', [
+        'label' => __('Hero CTA Button Text', 'irvandoda-seo-light'),
+        'section' => 'ida_hero_section',
+        'type' => 'text',
+    ]);
+    
+    // Hero CTA Link
+    $wp_customize->add_setting('ida_hero_cta_link', [
+        'default' => '#',
+        'sanitize_callback' => 'esc_url_raw',
+    ]);
+    
+    $wp_customize->add_control('ida_hero_cta_link', [
+        'label' => __('Hero CTA Button Link', 'irvandoda-seo-light'),
+        'section' => 'ida_hero_section',
+        'type' => 'url',
+    ]);
+    
+    // Trust Signal Text
+    $wp_customize->add_setting('ida_trust_text', [
+        'default' => 'Dipercaya oleh 5.000+ SEO Specialist',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_trust_text', [
+        'label' => __('Trust Signal Text', 'irvandoda-seo-light'),
+        'section' => 'ida_hero_section',
+        'type' => 'text',
+    ]);
+    
+    // CTA Section
+    $wp_customize->add_section('ida_cta_section', [
+        'title' => __('CTA Section', 'irvandoda-seo-light'),
+        'priority' => 32,
+    ]);
+    
+    // CTA Title
+    $wp_customize->add_setting('ida_cta_title', [
+        'default' => 'Siap Mendominasi Halaman Pertama?',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_cta_title', [
+        'label' => __('CTA Title', 'irvandoda-seo-light'),
+        'section' => 'ida_cta_section',
+        'type' => 'text',
+    ]);
+    
+    // CTA Description
+    $wp_customize->add_setting('ida_cta_description', [
+        'default' => 'Dapatkan arsitektur theme ini secara utuh dan terapkan di website WordPress Anda dalam waktu kurang dari 5 menit.',
+        'sanitize_callback' => 'sanitize_textarea_field',
+    ]);
+    
+    $wp_customize->add_control('ida_cta_description', [
+        'label' => __('CTA Description', 'irvandoda-seo-light'),
+        'section' => 'ida_cta_section',
+        'type' => 'textarea',
+    ]);
+    
+    // CTA Button Text
+    $wp_customize->add_setting('ida_cta_button_text', [
+        'default' => 'Download Versi PRO',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_cta_button_text', [
+        'label' => __('CTA Button Text', 'irvandoda-seo-light'),
+        'section' => 'ida_cta_section',
+        'type' => 'text',
+    ]);
+    
+    // CTA Link
+    $wp_customize->add_setting('ida_cta_link', [
+        'default' => '#',
+        'sanitize_callback' => 'esc_url_raw',
+    ]);
+    
+    $wp_customize->add_control('ida_cta_link', [
+        'label' => __('CTA Button Link', 'irvandoda-seo-light'),
+        'section' => 'ida_cta_section',
+        'type' => 'url',
+    ]);
+    
+    // Top Header Text
+    $wp_customize->add_setting('ida_top_header_text', [
+        'default' => 'Update Algoritma Terkini: ' . date('F Y'),
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_top_header_text', [
+        'label' => __('Top Header Text', 'irvandoda-seo-light'),
+        'section' => 'ida_design_system',
+        'type' => 'text',
+    ]);
+    
+    // Footer Tagline
+    $wp_customize->add_setting('ida_footer_tagline', [
+        'default' => 'Zero Distraction, Full Conversion.',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_footer_tagline', [
+        'label' => __('Footer Tagline', 'irvandoda-seo-light'),
+        'section' => 'ida_design_system',
+        'type' => 'text',
     ]);
 }
 add_action('customize_register', 'ida_customize_register');
