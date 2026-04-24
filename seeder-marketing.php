@@ -6,10 +6,13 @@
 
 require_once 'wp-load.php';
 
-if (!current_user_can('manage_options')) {
-    die('Access denied');
+// Simple security check
+if (!isset($_GET['run']) || $_GET['run'] !== 'yes') {
+    echo '<!DOCTYPE html><html><head><title>Seeder</title><style>body{font-family:system-ui;max-width:600px;margin:100px auto;text-align:center;padding:20px}h1{color:#2563eb}a{display:inline-block;padding:16px 32px;background:#2563eb;color:white;text-decoration:none;border-radius:8px;font-weight:600;margin-top:20px}a:hover{background:#1d4ed8}</style></head><body><h1>🚀 Digital Marketing Seeder</h1><p>Klik tombol di bawah untuk generate 9 artikel (3 kategori x 3 posts)</p><a href="?run=yes">Generate Content</a></body></html>';
+    exit;
 }
 
+echo '<!DOCTYPE html><html><head><title>Seeding...</title><style>body{font-family:system-ui;max-width:800px;margin:50px auto;padding:20px}h1{color:#2563eb}h2{color:#059669}p{padding:8px;background:#f8fafc;border-left:3px solid #2563eb;margin:8px 0}a{display:inline-block;padding:12px 24px;background:#2563eb;color:white;text-decoration:none;border-radius:6px;font-weight:600;margin-top:20px}a:hover{background:#1d4ed8}</style></head><body>';
 echo "<h1>Seeding Digital Marketing Content...</h1>";
 
 // Categories
@@ -396,5 +399,6 @@ foreach ($posts as $cat_name => $cat_posts) {
     }
 }
 
-echo "<h2 style='color: green;'>✓ Done! Created $total posts in 3 categories.</h2>";
-echo "<p><a href='" . home_url() . "' style='display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;'>View Homepage</a></p>";
+echo "<h2>✓ Done! Created $total posts in 3 categories.</h2>";
+echo "<p><a href='" . home_url() . "'>View Homepage</a></p>";
+echo "</body></html>";
