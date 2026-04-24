@@ -12,16 +12,17 @@ get_header(); ?>
 <main class="container">
     
     <!-- HERO BLOCK: High Conversion & Fast Perception -->
+    <?php $hero_settings = get_option('ida_hero_settings', []); ?>
     <section class="hero">
         <span class="hero-badge">IDA Design System v2.0</span>
-        <h1><?php echo get_theme_mod('ida_hero_title', 'Theme WordPress Teringan yang Mendesain Ulang Algoritma SEO Anda.'); ?></h1>
-        <p><?php echo get_theme_mod('ida_hero_description', 'Dibangun dengan filosofi Content-First dan Zero Distraction. Tingkatkan Dwell Time, CTR, dan dominasi SERP Google tanpa perlu plugin optimasi yang berat.'); ?></p>
-        <a href="<?php echo get_theme_mod('ida_hero_cta_link', '#'); ?>" class="btn">
-            <?php echo get_theme_mod('ida_hero_cta_text', 'Mulai Optimasi Sekarang'); ?>
+        <h1><?php echo esc_html($hero_settings['title'] ?? 'Theme WordPress Teringan yang Mendesain Ulang Algoritma SEO Anda.'); ?></h1>
+        <p><?php echo esc_html($hero_settings['description'] ?? 'Dibangun dengan filosofi Content-First dan Zero Distraction. Tingkatkan Dwell Time, CTR, dan dominasi SERP Google tanpa perlu plugin optimasi yang berat.'); ?></p>
+        <a href="<?php echo esc_url($hero_settings['cta_link'] ?? '#'); ?>" class="btn">
+            <?php echo esc_html($hero_settings['cta_text'] ?? 'Mulai Optimasi Sekarang'); ?>
         </a>
         <div class="trust-signal">
             <span class="stars">★★★★★</span>
-            <span><?php echo get_theme_mod('ida_trust_text', 'Dipercaya oleh 5.000+ SEO Specialist'); ?></span>
+            <span><?php echo esc_html($hero_settings['trust_text'] ?? 'Dipercaya oleh 5.000+ SEO Specialist'); ?></span>
         </div>
     </section>
 
@@ -123,13 +124,14 @@ get_header(); ?>
             <?php
             // Add CTA Section after 2nd category
             if ($section_count === 2) :
+                $cta_settings = get_option('ida_cta_settings', []);
             ?>
                 <!-- CTA SECTION (VISUAL BREAK & CONVERSION) -->
                 <section class="cta-section">
-                    <h2><?php echo get_theme_mod('ida_cta_title', 'Siap Mendominasi Halaman Pertama?'); ?></h2>
-                    <p><?php echo get_theme_mod('ida_cta_description', 'Dapatkan arsitektur theme ini secara utuh dan terapkan di website WordPress Anda dalam waktu kurang dari 5 menit.'); ?></p>
-                    <a href="<?php echo get_theme_mod('ida_cta_link', '#'); ?>" class="btn" style="background: white; color: var(--ida-text) !important;">
-                        <?php echo get_theme_mod('ida_cta_button_text', 'Download Versi PRO'); ?>
+                    <h2><?php echo esc_html($cta_settings['title'] ?? 'Siap Mendominasi Halaman Pertama?'); ?></h2>
+                    <p><?php echo esc_html($cta_settings['description'] ?? 'Dapatkan arsitektur theme ini secara utuh dan terapkan di website WordPress Anda dalam waktu kurang dari 5 menit.'); ?></p>
+                    <a href="<?php echo esc_url($cta_settings['button_link'] ?? '#'); ?>" class="btn" style="background: white; color: var(--ida-text) !important;">
+                        <?php echo esc_html($cta_settings['button_text'] ?? 'Download Versi PRO'); ?>
                     </a>
                 </section>
             <?php endif; ?>

@@ -50,9 +50,10 @@
         </div>
 
         <!-- Footer Bottom -->
+        <?php $general_settings = get_option('ida_general_settings', []); ?>
         <div class="footer-bottom">
             &copy; <?php echo date('Y'); ?> <?php bloginfo('name'); ?>. 
-            <?php echo get_theme_mod('ida_footer_tagline', 'Zero Distraction, Full Conversion.'); ?>
+            <?php echo esc_html($general_settings['footer_tagline'] ?? 'Zero Distraction, Full Conversion.'); ?>
         </div>
 
     </div>

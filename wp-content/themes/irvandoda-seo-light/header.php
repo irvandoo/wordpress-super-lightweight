@@ -23,9 +23,10 @@
 <?php wp_body_open(); ?>
 
 <!-- TOP HEADER MENU -->
+<?php $general_settings = get_option('ida_general_settings', []); ?>
 <div class="top-header">
     <div class="container top-header-inner">
-        <div><?php echo get_theme_mod('ida_top_header_text', 'Update Algoritma Terkini: ' . date('F Y')); ?></div>
+        <div><?php echo esc_html($general_settings['top_header_text'] ?? 'Update Algoritma Terkini: ' . date('F Y')); ?></div>
         <?php
         wp_nav_menu([
             'theme_location' => 'top-menu',
@@ -62,55 +63,150 @@
 <!-- MAIN NAVIGATION -->
 <div class="main-nav-wrapper">
     <div class="container">
-        <?php
-        wp_nav_menu([
-            'theme_location' => 'menu-1',
-            'menu_class'     => 'main-nav',
-            'container'      => false,
-            'fallback_cb'    => 'ida_main_menu_fallback',
-            'depth'          => 1,
-        ]);
-        ?>
-    </div>
-</div>
-
-<!-- SUB NAVIGATION / BREAKING NEWS TICKER -->
-<div class="ticker-wrap">
-    <div class="container ticker-inner">
-        <span class="ticker-label">Terbaru</span>
-        <div class="ticker-text">
-            <?php
-            $latest_post = new WP_Query([
-                'posts_per_page' => 1,
-                'post_status' => 'publish',
-                'orderby' => 'date',
-                'order' => 'DESC'
-            ]);
+        <div class="main-nav-container">
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle Menu" id="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             
-            if ($latest_post->have_posts()) :
-                while ($latest_post->have_posts()) : $latest_post->the_post();
-                    echo '<a href="' . get_permalink() . '">🔥 ' . get_the_title() . '</a>';
-                endwhile;
-                wp_reset_postdata();
-            else :
-                echo '<a href="#">🔥 Selamat datang di ' . get_bloginfo('name') . '</a>';
-            endif;
+            <?php
+            wp_nav_menu([
+                'theme_location' => 'menu-1',
+                'menu_class'     => 'main-nav',
+                'container'      => false,
+                'fallback_cb'    => 'ida_main_menu_fallback',
+                'depth'          => 1,
+            ]);
             ?>
         </div>
     </div>
 </div>
 
+<!-- SUB NAVIGATION / BREAKING NEWS TICKER -->
+<?php 
+$ticker_settings = get_option('ida_ticker_settings', []);
+$ticker_enable = isset($ticker_settings['enable']) ? $ticker_settings['enable'] : 1;
+$ticker_label = $ticker_settings['label'] ?? 'Terbaru';
+$ticker_count = $ticker_settings['count'] ?? 5;
+$ticker_speed = $ticker_settings['speed'] ?? 50;
+
+if ($ticker_enable) :
+?>
+<div class="ticker-wrap">
+    <div class="container ticker-inner">
+        <span class="ticker-label"><?php echo esc_html($ticker_label); ?></span>
+        <div class="ticker-content">
+            <div class="ticker-marquee">
+                <?php
+                $latest_posts = new WP_Query([
+                    'posts_per_page' => $ticker_count,
+                    'post_status' => 'publish',
+                    'orderby' => 'date',
+                    'order' => 'DESC'
+                ]);
+                
+                if ($latest_posts->have_posts()) :
+                    while ($latest_posts->have_posts()) : $latest_posts->the_post();
+                        echo '<a href="' . get_permalink() . '" class="ticker-item">';
+                        echo '<span class="ticker-icon">🔥</span> ';
+                        echo get_the_title();
+                        echo '</a>';
+                    endwhile;
+                    wp_reset_postdata();
+                else :
+                    echo '<a href="#" class="ticker-item">';
+                    echo '<span class="ticker-icon">🔥</span> ';
+                    echo 'Selamat datang di ' . get_bloginfo('name');
+                    echo '</a>';
+                endif;
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <script>
-// Sticky Nav Shadow on Scroll
-document.addEventListener('DOMContentLoaded', () => {
-    const navWrapper = document.querySelector('.main-nav-wrapper');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 150) {
-            navWrapper.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
-        } else {
-            navWrapper.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)';
+// Mobile Menu Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('mobile-menu-toggle');
+    const mainNav = document.querySelector('.main-nav');
+    
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            mainNav.classList.toggle('active');
+            document.body.classList.toggle('menu-open');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!menuToggle.contains(e.target) && !mainNav.contains(e.target)) {
+                menuToggle.classList.remove('active');
+                mainNav.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                menuToggle.classList.remove('active');
+                mainNav.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+        });
+    }
+    
+    // Breaking News Marquee Animation
+    const marquee = document.querySelector('.ticker-marquee');
+    if (marquee) {
+        // Clone items for infinite scroll
+        const items = marquee.innerHTML;
+        marquee.innerHTML = items + items + items; // Triple for smooth loop
+        
+        let scrollAmount = 0;
+        const speed = <?php echo $ticker_speed; ?>; // Pixels per second
+        let isPaused = false;
+        
+        function animate() {
+            if (!isPaused) {
+                scrollAmount += speed / 60; // 60fps
+                
+                if (scrollAmount >= marquee.scrollWidth / 3) {
+                    scrollAmount = 0;
+                }
+                
+                marquee.style.transform = `translateX(-${scrollAmount}px)`;
+            }
+            requestAnimationFrame(animate);
         }
-    });
+        
+        // Pause on hover
+        marquee.addEventListener('mouseenter', function() {
+            isPaused = true;
+        });
+        
+        marquee.addEventListener('mouseleave', function() {
+            isPaused = false;
+        });
+        
+        animate();
+    }
+    
+    // Sticky Nav Shadow on Scroll
+    const navWrapper = document.querySelector('.main-nav-wrapper');
+    if (navWrapper) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 150) {
+                navWrapper.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+            } else {
+                navWrapper.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)';
+            }
+        });
+    }
 });
 </script>
 

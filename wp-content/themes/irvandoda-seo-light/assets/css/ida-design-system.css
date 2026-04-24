@@ -170,6 +170,10 @@ img {
   transition: box-shadow 0.3s ease;
 }
 
+.main-nav-container {
+  position: relative;
+}
+
 .main-nav {
   display: flex;
   gap: var(--sp-4);
@@ -179,15 +183,25 @@ img {
   align-items: center;
   padding: 16px 0;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.main-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .main-nav a {
   color: var(--ida-text);
   white-space: nowrap;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 .main-nav a:hover {
   color: var(--ida-accent);
+  background: var(--ida-accent-soft);
   opacity: 1;
 }
 
@@ -205,12 +219,119 @@ img {
   opacity: 1;
 }
 
-/* Breaking News Ticker */
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 1000;
+}
+
+.mobile-menu-toggle span {
+  width: 100%;
+  height: 3px;
+  background: var(--ida-text);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Mobile Menu Styles */
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+  
+  .main-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: white;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 80px 24px 24px;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    gap: 0;
+  }
+  
+  .main-nav.active {
+    right: 0;
+  }
+  
+  .main-nav li {
+    width: 100%;
+    border-bottom: 1px solid var(--ida-border);
+  }
+  
+  .main-nav a {
+    display: block;
+    width: 100%;
+    padding: 16px 12px;
+    border-radius: 0;
+  }
+  
+  .main-nav .nav-cta {
+    margin-left: 0;
+    margin-top: 16px;
+    text-align: center;
+  }
+  
+  body.menu-open {
+    overflow: hidden;
+  }
+  
+  body.menu-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* Breaking News Ticker (Marquee) */
 .ticker-wrap {
   background: var(--ida-accent-soft);
   border-bottom: 1px solid var(--ida-border);
   padding: 10px 0;
   font-size: 14px;
+  overflow: hidden;
 }
 
 .ticker-inner {
@@ -222,28 +343,46 @@ img {
 .ticker-label {
   background: var(--ida-accent);
   color: white;
-  padding: 2px 8px;
+  padding: 4px 12px;
   border-radius: 4px;
   font-weight: 700;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.ticker-text {
+.ticker-content {
+  flex: 1;
   overflow: hidden;
+  position: relative;
+}
+
+.ticker-marquee {
+  display: inline-flex;
+  gap: 48px;
   white-space: nowrap;
-  text-overflow: ellipsis;
-  font-weight: 500;
+  will-change: transform;
 }
 
-.ticker-text a {
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: var(--ida-text);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
-.ticker-text a:hover {
+.ticker-item:hover {
   color: var(--ida-accent);
+  opacity: 1;
+}
+
+.ticker-icon {
+  font-size: 16px;
 }
 
 /* =========================================================
@@ -637,6 +776,51 @@ img {
   .cta-section p {
     font-size: 16px;
   }
+  
+  /* Ticker mobile adjustments */
+  .ticker-label {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  
+  .ticker-item {
+    font-size: 13px;
+  }
+  
+  .ticker-icon {
+    font-size: 14px;
+  }
+  
+  /* Logo mobile */
+  .logo {
+    font-size: 22px;
+  }
+  
+  /* Section header mobile */
+  .section-header h2 {
+    font-size: 20px;
+  }
+  
+  .section-header a {
+    font-size: 13px;
+  }
+  
+  /* Card mobile */
+  .card h3 {
+    font-size: 18px;
+  }
+  
+  .card p {
+    font-size: 14px;
+  }
+  
+  .card.featured h3 {
+    font-size: 22px;
+  }
+  
+  .card.featured p {
+    font-size: 15px;
+  }
 }
 
 /* Tablet adjustments */
@@ -648,12 +832,108 @@ img {
   .container {
     padding: 0 var(--sp-4);
   }
+  
+  .header-ad {
+    max-width: 600px;
+    height: 80px;
+  }
 }
 
 /* Large desktop */
 @media (min-width: 1280px) {
   .container {
     max-width: 1200px;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 896px) and (orientation: landscape) {
+  .hero {
+    padding: var(--sp-5) 0 var(--sp-4) 0;
+  }
+  
+  .hero h1 {
+    font-size: 28px;
+  }
+  
+  .section {
+    padding: var(--sp-4) 0;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .main-nav a,
+  .btn,
+  .card,
+  .ticker-item {
+    -webkit-tap-highlight-color: rgba(37, 99, 235, 0.1);
+  }
+  
+  /* Larger touch targets */
+  .main-nav a {
+    padding: 12px 16px;
+  }
+  
+  .btn {
+    padding: 16px 32px;
+    font-size: 17px;
+  }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .ticker-marquee {
+    animation: none !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .top-header,
+  .main-nav-wrapper,
+  .ticker-wrap,
+  .header-ad,
+  .cta-section,
+  .site-footer,
+  .mobile-menu-toggle,
+  #progress-bar {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+  
+  .container,
+  .container-single {
+    max-width: 100%;
+  }
+  
+  a {
+    text-decoration: underline;
+  }
+  
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 10pt;
   }
 }
 

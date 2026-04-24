@@ -45,6 +45,7 @@ define('IDA_MIN_PHP', '8.5.0');
 require_once IDA_THEME_DIR . '/inc/admin.php';
 require_once IDA_THEME_DIR . '/inc/branding.php';
 require_once IDA_THEME_DIR . '/inc/admin-style.php';
+require_once IDA_THEME_DIR . '/inc/theme-options.php';
 
 /**
  * ========================================
@@ -471,6 +472,73 @@ function ida_customize_register(WP_Customize_Manager $wp_customize): void
     $wp_customize->add_section('ida_design_system', [
         'title' => __('IDA Design System', 'irvandoda-seo-light'),
         'priority' => 30,
+    ]);
+    
+    // Breaking News Ticker Section
+    $wp_customize->add_section('ida_ticker_section', [
+        'title' => __('Breaking News Ticker', 'irvandoda-seo-light'),
+        'priority' => 29,
+    ]);
+    
+    // Enable Ticker
+    $wp_customize->add_setting('ida_ticker_enable', [
+        'default' => true,
+        'sanitize_callback' => 'rest_sanitize_boolean',
+    ]);
+    
+    $wp_customize->add_control('ida_ticker_enable', [
+        'label' => __('Enable Breaking News Ticker', 'irvandoda-seo-light'),
+        'section' => 'ida_ticker_section',
+        'type' => 'checkbox',
+    ]);
+    
+    // Ticker Label
+    $wp_customize->add_setting('ida_ticker_label', [
+        'default' => 'Terbaru',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    
+    $wp_customize->add_control('ida_ticker_label', [
+        'label' => __('Ticker Label Text', 'irvandoda-seo-light'),
+        'section' => 'ida_ticker_section',
+        'type' => 'text',
+        'description' => __('Text yang muncul di label ticker (contoh: Terbaru, Breaking News, Hot News)', 'irvandoda-seo-light'),
+    ]);
+    
+    // Ticker Count
+    $wp_customize->add_setting('ida_ticker_count', [
+        'default' => 5,
+        'sanitize_callback' => 'absint',
+    ]);
+    
+    $wp_customize->add_control('ida_ticker_count', [
+        'label' => __('Number of Posts in Ticker', 'irvandoda-seo-light'),
+        'section' => 'ida_ticker_section',
+        'type' => 'number',
+        'input_attrs' => [
+            'min' => 1,
+            'max' => 20,
+            'step' => 1,
+        ],
+        'description' => __('Jumlah artikel terbaru yang ditampilkan di ticker (1-20)', 'irvandoda-seo-light'),
+    ]);
+    
+    // Ticker Speed
+    $wp_customize->add_setting('ida_ticker_speed', [
+        'default' => 50,
+        'sanitize_callback' => 'absint',
+    ]);
+    
+    $wp_customize->add_control('ida_ticker_speed', [
+        'label' => __('Ticker Speed (pixels/second)', 'irvandoda-seo-light'),
+        'section' => 'ida_ticker_section',
+        'type' => 'number',
+        'input_attrs' => [
+            'min' => 10,
+            'max' => 200,
+            'step' => 10,
+        ],
+        'description' => __('Kecepatan scroll ticker dalam pixel per detik. Semakin besar semakin cepat (10-200)', 'irvandoda-seo-light'),
     ]);
     
     // Accent Color
