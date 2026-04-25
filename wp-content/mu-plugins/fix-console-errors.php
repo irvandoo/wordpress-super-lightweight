@@ -313,3 +313,28 @@ function remove_ses_lockdown() {
 }
 add_action('wp_head', 'remove_ses_lockdown', 1);
 add_action('admin_head', 'remove_ses_lockdown', 1);
+
+/**
+ * Dequeue SES lockdown scripts from WordPress
+ */
+function dequeue_ses_lockdown_scripts() {
+    // Dequeue any lockdown-related scripts
+    wp_dequeue_script('ses-lockdown');
+    wp_dequeue_script('lockdown-install');
+    wp_deregister_script('ses-lockdown');
+    wp_deregister_script('lockdown-install');
+}
+add_action('wp_enqueue_scripts', 'dequeue_ses_lockdown_scripts', 999);
+add_action('admin_enqueue_scripts', 'dequeue_ses_lockdown_scripts', 999);
+
+/**
+ * Remove lockdown scripts from script loader
+ */
+function remove_lockdown_from_loader($tag, $handle, $src) {
+    // Block any script containing 'lockdown' in the handle or src
+    if (strpos($handle, 'lockdown') !== false || strpos($src, 'lockdown') !== false) {
+        return '';
+    }
+    return $tag;
+}
+add_filter('script_loader_tag', 'remove_lockdown_from_loader', 10, 3);

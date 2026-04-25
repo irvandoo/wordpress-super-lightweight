@@ -1605,3 +1605,231 @@ img {
     align-self: flex-start;
   }
 }
+
+
+/* =========================================================
+   404 ERROR PAGE STYLES
+   ========================================================= */
+
+/* 404 Content Area */
+.site-content-404 {
+    flex-grow: 1;
+    padding: var(--sp-8) 0;
+    background-color: var(--ida-bg-soft);
+    min-height: 60vh;
+}
+
+.error-wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+    background: white;
+    padding: var(--sp-7) var(--sp-5);
+    border-radius: 20px;
+    border: 1px solid var(--ida-border);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+.error-code {
+    font-size: 100px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: var(--sp-3);
+    letter-spacing: -2px;
+    /* Text gradient for professional look */
+    background: -webkit-linear-gradient(45deg, #2563eb, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.error-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--ida-text);
+    margin-bottom: var(--sp-3);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.error-desc {
+    font-size: 18px;
+    color: var(--ida-muted);
+    margin-bottom: var(--sp-5);
+    line-height: 1.6;
+}
+
+/* Search Form 404 */
+.search-404 {
+    max-width: 500px;
+    margin: 0 auto var(--sp-5) auto;
+    display: flex;
+    gap: 8px;
+}
+
+.search-404 input[type="search"] {
+    flex-grow: 1;
+    padding: 14px 20px;
+    border: 1px solid var(--ida-border);
+    border-radius: 8px;
+    font-family: var(--font-sys);
+    font-size: 16px;
+    background: var(--ida-bg-soft);
+    transition: all 0.2s ease;
+}
+
+.search-404 input[type="search"]:focus {
+    outline: none;
+    background: white;
+    border-color: var(--ida-accent);
+    box-shadow: 0 0 0 3px var(--ida-accent-soft);
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--sp-5);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--ida-text) !important;
+    border: 2px solid var(--ida-border);
+}
+
+.btn-outline:hover {
+    background: var(--ida-bg-soft);
+    transform: translateY(-2px);
+    border-color: var(--ida-accent);
+}
+
+/* Recovery Content Section */
+.recovery-content {
+    margin-top: var(--sp-7);
+    text-align: left;
+    border-top: 1px solid var(--ida-border);
+    padding-top: var(--sp-5);
+}
+
+.recovery-content h3 {
+    font-size: 20px;
+    color: var(--ida-text);
+    margin-bottom: var(--sp-4);
+    text-align: center;
+    font-weight: 700;
+}
+
+/* Card Grid for 404 */
+.card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+}
+
+@media (min-width: 640px) {
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Card 404 Styles */
+.card-404 {
+    background: white;
+    border: 1px solid var(--ida-border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.card-404:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transform: translateY(-4px);
+}
+
+.card-body-404 {
+    padding: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-category-404 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ida-accent);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.card-body-404 h4 {
+    font-size: 16px;
+    line-height: 1.4;
+    margin: 0;
+    font-weight: 600;
+}
+
+.card-body-404 h4 a {
+    color: var(--ida-text);
+    transition: color 0.2s ease;
+}
+
+.card-body-404 h4 a:hover {
+    color: var(--ida-accent);
+}
+
+/* Mobile Adjustments for 404 */
+@media (max-width: 640px) {
+    .error-code {
+        font-size: 80px;
+    }
+    
+    .error-title {
+        font-size: 26px;
+    }
+    
+    .error-desc {
+        font-size: 16px;
+    }
+    
+    .search-404 {
+        flex-direction: column;
+    }
+    
+    .search-404 .btn {
+        width: 100%;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+    }
+    
+    .error-wrapper {
+        padding: var(--sp-5) var(--sp-4);
+    }
+    
+    .site-content-404 {
+        padding: var(--sp-5) 0;
+    }
+}
+
+/* Tablet Adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .error-code {
+        font-size: 90px;
+    }
+    
+    .error-title {
+        font-size: 28px;
+    }
+}

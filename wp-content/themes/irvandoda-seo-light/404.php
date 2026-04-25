@@ -1,36 +1,121 @@
 <?php
-declare(strict_types=1);
-
 /**
- * 404 Error Template
+ * 404 Error Page Template
+ * IDA Design System - Professional 404 with Recovery Options
  * 
  * @package Irvandoda_SEO_Light
  */
 
-if (!defined('ABSPATH')) exit;
+get_header(); 
 
-get_header();
+// Get theme settings
+$general_settings = get_option('ida_general_settings', []);
 ?>
 
-<main id="ida-main" class="ida-main" role="main">
-    <div class="ida-container">
-        
-        <?php ida_breadcrumb(); ?>
-        
-        <div class="ida-404">
-            <h1 class="ida-404-title"><?php esc_html_e('404 - Page Not Found', 'irvandoda-seo-light'); ?></h1>
-            <p class="ida-404-text"><?php esc_html_e('The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.', 'irvandoda-seo-light'); ?></p>
+<!-- 404 CONTENT AREA -->
+<main class="site-content-404">
+    <div class="container">
+        <div class="error-wrapper">
             
-            <div class="ida-404-search">
-                <h2><?php esc_html_e('Try searching:', 'irvandoda-seo-light'); ?></h2>
-                <?php get_search_form(); ?>
-            </div>
+            <div class="error-code">404</div>
             
-            <div class="ida-404-home">
-                <a href="<?php echo esc_url(home_url('/')); ?>" class="ida-button"><?php esc_html_e('Back to Home', 'irvandoda-seo-light'); ?></a>
+            <h1 class="error-title">Ups! Halaman Tidak Ditemukan</h1>
+            
+            <p class="error-desc">
+                Sepertinya halaman yang Anda cari telah dipindahkan, dihapus, atau Anda salah mengetikkan URL. 
+                Jangan khawatir, mari kita cari jalan kembalinya.
+            </p>
+
+            <!-- Search Form -->
+            <form class="search-404" role="search" method="get" action="<?php echo esc_url(home_url('/')); ?>">
+                <input type="search" 
+                       name="s" 
+                       placeholder="Cari topik SEO, artikel, atau tutorial..." 
+                       value="<?php echo get_search_query(); ?>" 
+                       required>
+                <button type="submit" class="btn">Cari Artikel</button>
+            </form>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-outline">
+                    ← Kembali ke Beranda
+                </a>
+                <a href="<?php echo esc_url(home_url('/sitemap.xml')); ?>" class="btn btn-outline">
+                    Lihat Peta Situs
+                </a>
             </div>
-        </div>
-        
+
+            <!-- Recovery Content: Pillar Articles -->
+            <div class="recovery-content">
+                <h3>Atau, Mulai Baca Artikel Terbaik Kami:</h3>
+                
+                <div class="card-grid">
+                    <?php
+                    // Get top 4 most viewed or recent posts
+                    $popular_posts = new WP_Query([
+                        'posts_per_page' => 4,
+                        'post_status' => 'publish',
+                        'orderby' => 'date',
+                        'order' => 'DESC',
+                        'meta_query' => [
+                            [
+                                'key' => '_thumbnail_id',
+                                'compare' => 'EXISTS'
+                            ]
+                        ]
+                    ]);
+
+                    if ($popular_posts->have_posts()) :
+                        while ($popular_posts->have_posts()) : $popular_posts->the_post();
+                            $categories = get_the_category();
+                            $category_name = !empty($categories) ? $categories[0]->name : 'Artikel';
+                    ?>
+                        <article class="card-404">
+                            <div class="card-body-404">
+                                <span class="card-category-404"><?php echo esc_html($category_name); ?></span>
+                                <h4>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php the_title(); ?>
+                                    </a>
+                                </h4>
+                            </div>
+                        </article>
+                    <?php 
+                        endwhile;
+                        wp_reset_postdata();
+                    else :
+                        // Fallback content if no posts
+                    ?>
+                        <article class="card-404">
+                            <div class="card-body-404">
+                                <span class="card-category-404">Pilar Content</span>
+                                <h4><a href="<?php echo home_url('/'); ?>">Blueprint Arsitektur Silo 2026: Cara Mengalahkan Kompetitor Tanpa Backlink</a></h4>
+                            </div>
+                        </article>
+                        <article class="card-404">
+                            <div class="card-body-404">
+                                <span class="card-category-404">On-Page SEO</span>
+                                <h4><a href="<?php echo home_url('/'); ?>">Mengapa Dwell Time Adalah Metrik Ranking #1 Saat Ini?</a></h4>
+                            </div>
+                        </article>
+                        <article class="card-404">
+                            <div class="card-body-404">
+                                <span class="card-category-404">Technical SEO</span>
+                                <h4><a href="<?php echo home_url('/'); ?>">Cara Cepat Mengatasi Error 5xx di Google Search Console</a></h4>
+                            </div>
+                        </article>
+                        <article class="card-404">
+                            <div class="card-body-404">
+                                <span class="card-category-404">Case Study</span>
+                                <h4><a href="<?php echo home_url('/'); ?>">Trafik Naik 300% Hanya Dengan Mengganti Format Daftar Isi (TOC)</a></h4>
+                            </div>
+                        </article>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+        </div> <!-- End Error Wrapper -->
     </div>
 </main>
 
