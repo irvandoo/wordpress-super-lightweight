@@ -46,6 +46,7 @@ require_once IDA_THEME_DIR . '/inc/admin.php';
 require_once IDA_THEME_DIR . '/inc/branding.php';
 require_once IDA_THEME_DIR . '/inc/admin-style.php';
 require_once IDA_THEME_DIR . '/inc/theme-options.php';
+require_once IDA_THEME_DIR . '/inc/social-meta.php';
 
 /**
  * ========================================
